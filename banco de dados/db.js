@@ -34,9 +34,10 @@
       var configUrl = new URL("./firebase-config.js", document.baseURI).href;
       var configModulo = await import(configUrl);
       var firebaseConfig = configModulo.firebaseConfig;
-      var moduloApp = await import("https://esm.sh/firebase@10.12.0/app");
-      var moduloAuth = await import("https://esm.sh/firebase@10.12.0/auth");
-      var moduloFirestore = await import("https://esm.sh/firebase@10.12.0/firestore");
+      var moduloApp = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+      var moduloAuth = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      var moduloFirestore = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      // Garante que os componentes auth e firestore estejam registrados antes de inicializar o app
       app = moduloApp.initializeApp(firebaseConfig);
       auth = moduloAuth.getAuth(app);
       db = moduloFirestore.getFirestore(app);

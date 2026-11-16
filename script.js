@@ -263,7 +263,7 @@ function paginaAtual() {
 }
 
 DB.ready.then(function() {
-    import("https://esm.sh/firebase@10.12.0/auth").then(function(moduloAuth) {
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(function(moduloAuth) {
         moduloAuth.onAuthStateChanged(DB.auth, function(usuario) {
             var pagina = paginaAtual();
             if (!usuario && paginasProtegidas.indexOf(pagina) !== -1) {
@@ -382,7 +382,7 @@ if (formCadastro) {
                 await DB.ready;
 
                 const moduloAuth = await import(
-                    "https://esm.sh/firebase@10.12.0/auth"
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
                 );
 
                 const credencial =
@@ -396,7 +396,7 @@ if (formCadastro) {
                 const agora = Date.now();
 
                 const moduloFirestore = await import(
-                    "https://esm.sh/firebase@10.12.0/firestore"
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
                 );
 
                 const ref = moduloFirestore.doc(
@@ -488,7 +488,7 @@ if (formLogin) {
                 await DB.ready;
 
                 const moduloAuth = await import(
-                    "https://esm.sh/firebase@10.12.0/auth"
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
                 );
 
                 await moduloAuth.signInWithEmailAndPassword(
@@ -1549,7 +1549,7 @@ if (btnSair) {
                 await DB.ready;
 
                 const moduloAuth = await import(
-                    "https://esm.sh/firebase@10.12.0/auth"
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
                 );
 
                 await moduloAuth.signOut(DB.auth);
