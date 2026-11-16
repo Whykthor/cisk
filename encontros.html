@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Clube do Livro - Encontros</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="tela inicio.html"
+            class="logo"
+        >
+
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+
+        </a>
+
+
+        <nav class="menu">
+
+<a href="tela inicio.html">
+               Início
+           </a>
+
+            <a href="livros.html">
+                Livros
+            </a>
+            <a href="encontros.html" 
+            class="ativo">
+                Encontros
+            </a>
+
+
+            <a href="sala-online.html">
+                Sala Online
+            </a>
+
+
+            <a href="Minha estante.html">
+                Minha Estante
+            </a>
+
+            <a href="perfil.html">
+                Perfil
+            </a>
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="encontros-cabecalho">
+
+        <h1>
+            Próximos Encontros
+        </h1>
+
+        <p>
+            Marque na sua agenda e prepare-se para as discussões.
+        </p>
+
+    </section>
+
+
+    <section class="proximo-encontro">
+
+        <span class="etiqueta-encontro">
+            PRÓXIMO ENCONTRO
+        </span>
+
+
+        <h2 id="proximoEncontroTitulo">
+            Discussão: "Ficções" de Jorge Luis Borges
+        </h2>
+
+
+        <div class="info-proximo-encontro">
+
+            <span id="proximoEncontroData">
+                25 de Junho, às 19:30
+            </span>
+
+            <span id="proximoEncontroModalidade">
+                Online
+            </span>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn btn-encontro"
+            id="btnConfirmarEncontro"
+        >
+            Confirmar Presença
+        </button>
+
+        <a
+            id="linkSalaEncontro"
+            href="https://meet.google.com/abc-defg-hij"
+            class="btn btn-roxo btn-sala"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Entrar na sala
+        </a>
+
+    </section>
+
+
+    <section class="agenda-encontros">
+
+        <h2>
+            Agenda Completa
+        </h2>
+
+
+        <div id="agendaLista"></div>
+
+    </section>
+
+</main>
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

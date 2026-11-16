@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Clube do Livro - Acesso</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+    <main class="auth-card">
+
+        <div class="auth-logo">
+            ◔
+        </div>
+
+        <h1 id="tituloAcesso">
+            Entrar
+        </h1>
+
+        <p class="auth-sub" id="textoAcesso">
+            Entre na sua conta para continuar suas leituras.
+        </p>
+
+
+        <div class="auth-tabs">
+
+            <button
+                class="auth-tab ativo"
+                id="btnLogin"
+                type="button"
+            >
+                Login
+            </button>
+
+            <button
+                class="auth-tab"
+                id="btnCadastro"
+                type="button"
+            >
+                Cadastro
+            </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <form
+            id="formLogin"
+            class="form-acesso"
+        >
+
+            <div class="form-group">
+
+                <label for="emailLogin">
+                    E-MAIL
+                </label>
+
+                <input
+                    type="email"
+                    id="emailLogin"
+                    placeholder="seu@email.com"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="senhaLogin">
+                    SENHA
+                </label>
+
+                <input
+                    type="password"
+                    id="senhaLogin"
+                    placeholder="Digite sua senha"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-roxo comecar"
+            >
+                Entrar
+            </button>
+
+        </form>
+
+
+        <!-- CADASTRO -->
+
+        <form
+            id="formCadastro"
+            class="form-acesso esconder"
+        >
+
+            <div class="form-group">
+
+                <label for="nomeCadastro">
+                    NOME COMPLETO
+                </label>
+
+                <input
+                    type="text"
+                    id="nomeCadastro"
+                    placeholder="Como quer ser chamado?"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="emailCadastro">
+                    E-MAIL
+                </label>
+
+                <input
+                    type="email"
+                    id="emailCadastro"
+                    placeholder="seu@email.com"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="senhaCadastro">
+                    SENHA
+                </label>
+
+                <input
+                    type="password"
+                    id="senhaCadastro"
+                    placeholder="Mínimo 8 caracteres"
+                    minlength="8"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-roxo comecar"
+            >
+                Criar Conta
+            </button>
+
+        </form>
+
+    </main>
+
+
+    <script src="banco%20de%20dados/dados-fixos.js"></script>
+    <script src="banco%20de%20dados/db.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

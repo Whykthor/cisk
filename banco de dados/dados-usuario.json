@@ -1,0 +1,27 @@
+{
+  "versao": 1,
+  "exportadoEm": null,
+  "usuario": {
+    "nome": "",
+    "email": "",
+    "senha": "",
+    "descricao": "",
+    "logado": false
+  },
+  "clube": {
+    "nome": ""
+  },
+  "progresso": {
+    "livro": 0
+  },
+  "presenca": {
+    "proximoEncontro": ""
+  },
+  "leituras": {
+    "ultima": {
+      "titulo": "",
+      "autor": "",
+      "paginas": ""
+    }
+  }
+}

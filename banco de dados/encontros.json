@@ -1,0 +1,25 @@
+{
+  "proximo": {
+    "etiqueta": "PRÓXIMO ENCONTRO",
+    "titulo": "Discussão: \"Ficções\" de Jorge Luis Borges",
+    "dataHoraTexto": "25 de Junho, às 19:30",
+    "modalidade": "Online",
+    "meetUrl": "https://meet.google.com/abc-defg-hij"
+  },
+  "agenda": [
+    {
+      "mes": "JUL",
+      "dia": "12",
+      "titulo": "Debate: Flor do Vento",
+      "mediacaoOuLocal": "Mediação: Raianne Viana",
+      "detalhes": null
+    },
+    {
+      "mes": "AGO",
+      "dia": "05",
+      "titulo": "Workshop: Escrita Criativa",
+      "mediacaoOuLocal": "Encontro Online",
+      "detalhes": "Workshop de Escrita Criativa - 05 de Agosto."
+    }
+  ]
+}

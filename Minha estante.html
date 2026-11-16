@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Minha Estante</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="tela inicio.html"
+            class="logo"
+        >
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+        </a>
+
+
+        <nav class="menu">
+<a 
+              href="tela inicio.html">
+               Início
+           </a>
+
+            <a href="livros.html">
+                Livros
+            </a>
+            <a href="encontros.html">
+                Encontros
+            </a>
+
+
+            <a href="sala-online.html">
+                Sala Online
+            </a>
+
+
+            <a href="Minha estante.html" 
+            class="ativo">
+                Minha Estante
+            </a>
+
+            <a href="perfil.html">
+                Perfil
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="stats">
+
+        <div class="card stat">
+
+            <span>
+                Lidos em 2026
+            </span>
+
+            <strong>
+                12
+            </strong>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <span>
+                Páginas lidas
+            </span>
+
+            <strong>
+                3.450
+            </strong>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <span>
+                Desejados
+            </span>
+
+            <strong>
+                8
+            </strong>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <span>
+                Meta anual
+            </span>
+
+            <strong>
+                24
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <section class="agora">
+
+        <h2>
+            Lendo Agora
+        </h2>
+
+
+        <div class="lendo-card">
+
+            <div class="capa-estante">
+                Ficções
+            </div>
+
+
+            <div class="lendo-info">
+
+                <h3>
+                    Ficções
+                </h3>
+
+                <p>
+                    Jorge Luis Borges
+                </p>
+
+
+                <div class="progresso-top">
+
+                    <b id="textoProgresso">
+                        Progresso: 65%
+                    </b>
+
+                </div>
+
+
+                <div class="barra">
+
+                    <div id="barraProgresso"></div>
+
+                </div>
+
+
+                <button
+                    class="btn btn-roxo atualizar"
+                    id="btnAtualizarProgresso"
+                >
+                    Atualizar Progresso
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="livros-grid">
+
+        <div class="livro">
+
+            <div class="capa-lista">
+                Marina
+            </div>
+
+            <h4>
+                Marina
+            </h4>
+
+        </div>
+
+
+        <div class="livro">
+
+            <div class="capa-lista">
+                Flor do Vento
+            </div>
+
+            <h4>
+                Flor do Vento
+            </h4>
+
+        </div>
+
+
+        <div class="livro">
+
+            <div class="capa-lista">
+                Aruanda
+            </div>
+
+            <h4>
+                Aruanda
+            </h4>
+
+        </div>
+
+
+        <a
+            href="nova leitura.html"
+            class="adicionar"
+        >
+
+            <div>
+
+                <b>
+                    +
+                </b>
+
+                Adicionar
+
+            </div>
+
+        </a>
+
+    </section>
+
+</main>
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

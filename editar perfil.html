@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Editar Perfil</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="perfil.html"
+            class="logo"
+        >
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="container pagina-form">
+
+    <section class="card form-card">
+
+        <h1>
+            Editar Perfil
+        </h1>
+
+
+        <form id="formEditarPerfil">
+
+            <div class="form-group">
+
+                <label for="editarNome">
+                    NOME
+                </label>
+
+                <input
+                    type="text"
+                    id="editarNome"
+                    placeholder="Seu nome"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="editarDescricao">
+                    DESCRIÇÃO
+                </label>
+
+                <input
+                    type="text"
+                    id="editarDescricao"
+                    placeholder="Descrição do perfil"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-roxo botao-form"
+            >
+                Salvar
+            </button>
+
+
+            <a
+                href="perfil.html"
+                class="btn btn-claro botao-form"
+            >
+                Cancelar
+            </a>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

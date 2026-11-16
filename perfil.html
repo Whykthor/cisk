@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Clube do Livro - Perfil</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="tela inicio.html"
+            class="logo"
+        >
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+        </a>
+
+
+        <nav class="menu">
+
+<a href="tela inicio.html">
+               Início
+           </a>
+
+            <a href="livros.html">
+                Livros
+            </a>
+            <a href="encontros.html">
+                Encontros
+            </a>
+
+
+            <a href="sala-online.html">
+                Sala Online
+            </a>
+
+
+            <a href="Minha estante.html">
+                Minha Estante
+            </a>
+
+            <a href="perfil.html"
+            class="ativo">
+                Perfil
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="card perfil-top">
+
+        <div class="avatar-grande"></div>
+
+
+        <div class="perfil-texto">
+
+            <h1 id="nomePerfil">
+                Seu Nome de Leitor
+            </h1>
+
+            <em>
+                Explorando mundos através das páginas.
+            </em>
+
+        </div>
+
+
+        <a
+            href="editar perfil.html"
+            class="btn btn-claro editar"
+        >
+            Editar Perfil
+        </a>
+
+    </section>
+
+
+    <section class="config">
+
+        <h2 class="titulo-secao">
+            Configurações
+        </h2>
+
+
+        <div class="card config-list">
+
+            <a
+                href="dados pessoais.html"
+                class="config-item"
+            >
+
+                <div class="config-icon">
+                    ♙
+                </div>
+
+                <span>
+                    Dados Pessoais
+                </span>
+
+                <b class="seta">
+                    ›
+                </b>
+
+            </a>
+
+
+            
+
+            <a
+                href="#"
+                class="config-item"
+                id="btnExportarDados"
+            >
+
+                <div class="config-icon">
+                    ⇓
+                </div>
+
+                <span>
+                    Exportar Dados (JSON)
+                </span>
+
+                <b class="seta">
+                    ›
+                </b>
+
+            </a>
+
+
+            <a
+                href="#"
+                class="config-item"
+                id="btnImportarDados"
+            >
+
+                <div class="config-icon">
+                    ⇑
+                </div>
+
+                <span>
+                    Importar Dados (JSON)
+                </span>
+
+                <b class="seta">
+                    ›
+                </b>
+
+            </a>
+
+            <input
+                type="file"
+                accept="application/json"
+                id="inputImportarDados"
+                hidden
+            >
+
+            <p
+                class="texto-ajuda"
+            >
+                Salve o arquivo exportado em
+                <code>banco de dados/dados-usuario.json</code>.
+            </p>
+
+
+            <a
+                href="cadastro.html"
+                class="config-item sair"
+            >
+
+                <div class="config-icon">
+                    ↪
+                </div>
+
+                <span>
+                    Sair da Conta
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

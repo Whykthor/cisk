@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Clube do Livro - Livros</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="tela inicio.html"
+            class="logo"
+        >
+
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+
+        </a>
+
+<nav class="menu">
+
+<a href="tela inicio.html">
+                Início
+            </a>
+
+            <a href="livros.html" class="ativo">
+                Livros
+            </a>
+             <a href="encontros.html">
+                 Encontros
+             </a>
+
+
+            <a href="sala-online.html">
+                Sala Online
+            </a>
+
+
+            <a href="Minha estante.html">
+                Minha Estante
+            </a>
+
+            <a href="perfil.html">
+                Perfil
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+
+
+
+<main class="container">
+
+
+
+
+    <section class="biblioteca-cabecalho">
+
+        <div>
+
+            <h1>
+                Nossa Biblioteca
+            </h1>
+
+            <p>
+                Descubra novas histórias, veja o resumo
+                e encontre seu próximo livro.
+            </p>
+
+        </div>
+
+
+        <div class="biblioteca-pesquisa">
+
+            <input
+                type="text"
+                id="pesquisaLivro"
+                placeholder="Pesquisar livro..."
+            >
+
+        </div>
+
+    </section>
+
+
+
+    <section
+        class="biblioteca-grid"
+        id="bibliotecaGrid"
+    >
+
+    </section>
+
+
+
+
+    <div
+        class="nenhum-livro"
+        id="nenhumLivro"
+    >
+
+        <h3>
+            Nenhum livro encontrado
+        </h3>
+
+        <p>
+            Tente pesquisar outro título ou autor.
+        </p>
+
+    </div>
+
+
+</main>
+
+
+
+
+<div
+    class="modal-resumo"
+    id="modalResumo"
+>
+
+    <div class="modal-conteudo">
+
+
+        <button
+            type="button"
+            class="fechar-modal"
+            id="fecharModal"
+        >
+            ×
+        </button>
+
+
+        <span class="modal-etiqueta">
+            RESUMO DO LIVRO
+        </span>
+
+
+        <h2 id="modalTitulo">
+        </h2>
+
+
+        <h4 id="modalAutor">
+        </h4>
+
+
+        <div class="linha-modal">
+        </div>
+
+
+        <p id="modalTexto">
+        </p>
+
+
+        <button
+            type="button"
+            class="btn btn-roxo btn-fechar-resumo"
+            id="btnFecharResumo"
+        >
+            Fechar
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+
+<footer class="biblioteca-footer">
+
+    Clube do Livro — Nossa Biblioteca
+
+</footer>
+
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
