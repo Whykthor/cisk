@@ -787,19 +787,19 @@ if (formEditarPerfil) {
 
 
     if (campoEditarNome) {
+        (async function() {
+            const nomeAtual =
+                await obter(
+                    "usuario.nome"
+                );
 
-        const nomeAtual =
-            await obter(
-                "usuario.nome"
-            );
+            if (nomeAtual) {
 
+                campoEditarNome.value =
+                    nomeAtual;
 
-        if (nomeAtual) {
-
-            campoEditarNome.value =
-                nomeAtual;
-        }
-
+            }
+        })();
     }
 
     formEditarPerfil.addEventListener(
@@ -876,22 +876,22 @@ if (formDados) {
 
 
     if (dadosNome) {
-
-        dadosNome.value =
-            await obter(
-                "usuario.nome"
-            ) || "";
-
+        (async function() {
+            dadosNome.value =
+                await obter(
+                    "usuario.nome"
+                ) || "";
+        })();
     }
 
 
     if (dadosEmail) {
-
-        dadosEmail.value =
-            await obter(
-                "usuario.email"
-            ) || "";
-
+        (async function() {
+            dadosEmail.value =
+                await obter(
+                    "usuario.email"
+                ) || "";
+        })();
     }
 
 
