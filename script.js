@@ -118,6 +118,63 @@ async function obter(caminho, padrao) {
     return await DB.obter(caminho, padrao);
 }
 
+// =========================================
+// TOAST NOTIFICATIONS
+// =========================================
+
+function garantirToastContainer() {
+    if (document.getElementById("toast-container")) {
+        return;
+    }
+    const container = document.createElement("div");
+    container.id = "toast-container";
+    container.className = "toast-container";
+    document.body.appendChild(container);
+}
+
+function mostrarNotificacao(mensagem, tipo = "info") {
+    garantirToastContainer();
+
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+    toast.className = "toast toast-" + tipo;
+
+    const icones = {
+        erro: "✕",
+        sucesso: "✔",
+        aviso: "⚠",
+        info: "ℹ"
+    };
+
+    toast.innerHTML =
+        '<div class="toast-icone">' + (icones[tipo] || icones.info) + '</div>' +
+        '<div>' + mensagem + '</div>' +
+        '<button class="toast-fecha" aria-label="Fechar">✕</button>';
+
+    toast.querySelector(".toast-fecha").addEventListener("click", function() {
+        toast.style.animation = "toastSair 0.3s ease-in forwards";
+        setTimeout(function() {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    });
+
+    container.appendChild(toast);
+
+    setTimeout(function() {
+        if (toast.parentNode) {
+            toast.style.animation = "toastSair 0.3s ease-in forwards";
+            setTimeout(function() {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    }, 3000);
+}
+
 async function definir(caminho, valor) {
     await DB.ready;
     return await DB.definir(caminho, valor);
@@ -283,8 +340,9 @@ if (formCadastro) {
 
             if (nome.length < 2) {
 
-                alert(
-                    "Digite seu nome."
+                mostrarNotificacao(
+                    "Digite seu nome.",
+                    "erro"
                 );
 
                 return;
@@ -294,8 +352,9 @@ if (formCadastro) {
 
             if (senha.length < 8) {
 
-                alert(
-                    "A senha precisa ter pelo menos 8 caracteres."
+                mostrarNotificacao(
+                    "A senha precisa ter pelo menos 8 caracteres.",
+                    "erro"
                 );
 
                 return;
@@ -308,8 +367,9 @@ if (formCadastro) {
                 senha !== confirmarSenha
             ) {
 
-                alert(
-                    "As senhas não são iguais."
+                mostrarNotificacao(
+                    "As senhas não são iguais.",
+                    "erro"
                 );
 
                 return;
@@ -376,16 +436,18 @@ if (formCadastro) {
 
                 await migrarLegado(uid);
 
-                alert(
-                    "Conta criada com sucesso!"
+                mostrarNotificacao(
+                    "Conta criada com sucesso!",
+                    "sucesso"
                 );
 
                 window.location.href = "tela inicio.html";
 
             } catch (erro) {
 
-                alert(
-                    "Erro ao criar conta: " + (erro && erro.message ? erro.message : erro)
+                mostrarNotificacao(
+                    "Erro ao criar conta: " + (erro && erro.message ? erro.message : erro),
+                    "erro"
                 );
 
             }
@@ -446,8 +508,9 @@ if (formLogin) {
 
             } catch (erro) {
 
-                alert(
-                    "E-mail ou senha incorretos."
+                mostrarNotificacao(
+                    "E-mail ou senha incorretos.",
+                    "erro"
                 );
 
             }
@@ -568,8 +631,9 @@ if (btnWorkshop) {
         "click",
         function() {
 
-            alert(
-                "Workshop de Escrita Criativa - 05 de Agosto."
+            mostrarNotificacao(
+                "Workshop de Escrita Criativa - 05 de Agosto.",
+                "info"
             );
 
         }
@@ -685,8 +749,9 @@ if (btnAtualizarProgresso) {
 
             else {
 
-                alert(
-                    "Digite um número entre 0 e 100."
+                mostrarNotificacao(
+                    "Digite um número entre 0 e 100.",
+                    "aviso"
                 );
 
             }
@@ -754,8 +819,9 @@ if (formNovaLeitura) {
             );
 
 
-            alert(
-                "Livro adicionado à sua estante!"
+            mostrarNotificacao(
+                "Livro adicionado à sua estante!",
+                "sucesso"
             );
 
 
@@ -837,8 +903,9 @@ if (formEditarPerfil) {
             }
 
 
-            alert(
-                "Perfil atualizado!"
+            mostrarNotificacao(
+                "Perfil atualizado!",
+                "sucesso"
             );
 
 
@@ -922,8 +989,9 @@ if (formDados) {
             }
 
 
-            alert(
-                "Dados atualizados com sucesso!"
+            mostrarNotificacao(
+                "Dados atualizados com sucesso!",
+                "sucesso"
             );
 
 
@@ -971,8 +1039,9 @@ if (formClube) {
             }
 
 
-            alert(
-                "Clube adicionado!"
+            mostrarNotificacao(
+                "Clube adicionado!",
+                "sucesso"
             );
 
 
@@ -1001,8 +1070,9 @@ if (btnSalvarNotificacoes) {
         "click",
         function() {
 
-            alert(
-                "Configurações de notificações salvas!"
+            mostrarNotificacao(
+                "Configurações de notificações salvas!",
+                "sucesso"
             );
 
 
@@ -1268,7 +1338,7 @@ function renderizarEncontros() {
                             "click",
                             function() {
 
-                                alert(item.detalhes);
+                                mostrarNotificacao(item.detalhes, "info");
 
                             }
                         );
