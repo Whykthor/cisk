@@ -44,6 +44,7 @@
       fs = moduloFirestore;
       DB.auth = auth;
       DB.db = db;
+      DB.fs = fs;
     })();
     initPromise.catch(function(e) {
       console.warn("Falha ao inicializar Firebase:", e);

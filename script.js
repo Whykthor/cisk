@@ -175,6 +175,153 @@ function mostrarNotificacao(mensagem, tipo = "info") {
     }, 3000);
 }
 
+// =========================================
+// SINCRONIZACAO DE DADOS DO USUARIO (Firestore -> Pagina)
+// =========================================
+
+async function sincronizarDadosUsuario() {
+    await DB.ready;
+
+    var uid = DB.auth && DB.auth.currentUser ? DB.auth.currentUser.uid : null;
+    if (!uid || !DB.db || !DB.fs) {
+        return;
+    }
+
+    var fs = DB.fs;
+    var db = DB.db;
+
+    try {
+        var ref = fs.doc(db, "usuarios/" + uid);
+        var snap = await fs.getDoc(ref);
+
+        if (!snap.exists()) {
+            return;
+        }
+
+        var dados = snap.data() || {};
+        var usuario = dados.usuario || {};
+        var clube = dados.clube || {};
+        var progresso = dados.progresso || {};
+        var presenca = dados.presenca || {};
+        var leituras = (dados.leituras || {}).ultima || {};
+
+        // ---------- Perfil ----------
+        var elNomePerfil = document.getElementById("nomePerfil");
+        if (elNomePerfil && usuario.nome) {
+            elNomePerfil.textContent = usuario.nome;
+        }
+
+        var elDescricaoPerfil = document.querySelector(".perfil-texto em");
+        if (elDescricaoPerfil && usuario.descricao) {
+            elDescricaoPerfil.textContent = usuario.descricao;
+        }
+
+        // ---------- Dados Pessoais ----------
+        var elDadosNome = document.getElementById("dadosNome");
+        if (elDadosNome && usuario.nome) {
+            elDadosNome.value = usuario.nome;
+        }
+
+        var elDadosEmail = document.getElementById("dadosEmail");
+        if (elDadosEmail && usuario.email) {
+            elDadosEmail.value = usuario.email;
+        }
+
+        // ---------- Editar Perfil ----------
+        var elEditarNome = document.getElementById("editarNome");
+        if (elEditarNome && usuario.nome) {
+            elEditarNome.value = usuario.nome;
+        }
+
+        var elEditarDescricao = document.getElementById("editarDescricao");
+        if (elEditarDescricao && usuario.descricao) {
+            elEditarDescricao.value = usuario.descricao;
+        }
+
+        // ---------- Estante / Progresso ----------
+        var elProgressoTexto = document.getElementById("textoProgresso");
+        var elBarraProgresso = document.getElementById("barraProgresso");
+
+        if (elProgressoTexto && progresso.livro !== undefined && progresso.livro !== null) {
+            elProgressoTexto.textContent = "Progresso: " + progresso.livro + "%";
+        }
+
+        if (elBarraProgresso && progresso.livro !== undefined && progresso.livro !== null) {
+            elBarraProgresso.style.width = progresso.livro + "%";
+        }
+
+        var elCapaEstante = document.querySelector(".capa-estante");
+        var elLivroTitulo = document.querySelector(".lendo-info h3");
+        var elLivroAutor = document.querySelector(".lendo-info p");
+
+        if (elCapaEstante && leituras.titulo) {
+            elCapaEstante.textContent = leituras.titulo;
+        }
+        if (elLivroTitulo && leituras.titulo) {
+            elLivroTitulo.textContent = leituras.titulo;
+        }
+        if (elLivroAutor && leituras.autor) {
+            elLivroAutor.textContent = leituras.autor;
+        }
+
+        // ---------- Proximo Encontro ----------
+        var proximo = presenca.proximoEncontro || "";
+
+        var elEncontroMes = document.getElementById("proximoEncontroMes");
+        var elEncontroDia = document.getElementById("proximoEncontroDia");
+        var elEncontroTitulo = document.getElementById("proximoEncontroTitulo");
+        var elEncontroHora = document.getElementById("proximoEncontroHora");
+
+        if (proximo && (elEncontroMes || elEncontroDia || elEncontroTitulo || elEncontroHora)) {
+            var partes = String(proximo).split("|");
+
+            if (partes[0] && elEncontroMes) {
+                elEncontroMes.textContent = partes[0];
+            }
+            if (partes[1] && elEncontroDia) {
+                elEncontroDia.textContent = partes[1];
+            }
+            if (partes[2] && elEncontroTitulo) {
+                elEncontroTitulo.textContent = partes[2];
+            }
+            if (partes[3] && elEncontroHora) {
+                elEncontroHora.textContent = partes[3];
+            }
+        }
+
+        var elEncontroTitulo2 = document.querySelector("#proximoEncontroTitulo");
+        var elEncontroData = document.getElementById("proximoEncontroData");
+        var elEncontroModalidade = document.getElementById("proximoEncontroModalidade");
+
+        if (proximo && elEncontroTitulo2 && elEncontroTitulo2.id === "proximoEncontroTitulo") {
+            var partes2 = String(proximo).split("|");
+            if (partes2[2]) {
+                elEncontroTitulo2.textContent = partes2[2];
+            }
+        }
+
+        if (proximo && elEncontroData) {
+            var partes3 = String(proximo).split("|");
+            if (partes3[0] && partes3[1]) {
+                elEncontroData.textContent = partes3[0] + " de " + partes3[1] + ", às 19:30";
+            }
+        }
+
+        if (proximo && elEncontroModalidade) {
+            elEncontroModalidade.textContent = "Online";
+        }
+
+        // ---------- Clube ----------
+        var elClubeNome = document.getElementById("nomeClube");
+        if (elClubeNome && clube.nome) {
+            elClubeNome.value = clube.nome;
+        }
+
+    } catch (erro) {
+        console.warn("Erro ao sincronizar dados do usuario:", erro);
+    }
+}
+
 async function definir(caminho, valor) {
     await DB.ready;
     return await DB.definir(caminho, valor);
@@ -272,6 +419,9 @@ DB.ready.then(function() {
             }
             if (usuario && pagina === "cadastro") {
                 location.href = "tela inicio.html";
+            }
+            if (usuario) {
+                sincronizarDadosUsuario();
             }
         });
     });
