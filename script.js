@@ -23,14 +23,6 @@ const textoAcesso =
 const irLogin =
     document.getElementById("irLogin");
 
-function solicitarBackupJSON() {
-    var resposta = confirm("Deseja salvar as alterações em JSON?");
-
-    if (resposta) {
-        DB.exportarUsuario("cisk_db_usuario.json");
-    }
-}
-
 function mostrarLogin() {
     if (formLogin) {
         formLogin.classList.remove("esconder");
@@ -58,10 +50,7 @@ function mostrarLogin() {
             "Entre na sua conta para continuar suas leituras.";
 
     }
-
 }
-
-
 
 function mostrarCadastro() {
 
@@ -91,10 +80,7 @@ function mostrarCadastro() {
             "Junte-se ao Clube do Livro e comece sua jornada.";
 
     }
-
 }
-
-
 
 if (btnLogin) {
 
@@ -105,8 +91,6 @@ if (btnLogin) {
 
 }
 
-
-
 if (btnCadastro) {
 
     btnCadastro.addEventListener(
@@ -115,8 +99,6 @@ if (btnCadastro) {
     );
 
 }
-
-
 
 if (irLogin) {
 
@@ -127,7 +109,116 @@ if (irLogin) {
 
 }
 
+// =========================================
+// HELPERS (DB via Firebase/Firestore)
+// =========================================
 
+async function obter(caminho, padrao) {
+    await DB.ready;
+    return await DB.obter(caminho, padrao);
+}
+
+async function definir(caminho, valor) {
+    await DB.ready;
+    return await DB.definir(caminho, valor);
+}
+
+async function migrarLegado(uid) {
+    if (localStorage.getItem("cisk_db_migrado") === "1") {
+        return;
+    }
+    var bruto = localStorage.getItem("cisk_db_usuario");
+    if (!bruto) {
+        return;
+    }
+    var legado;
+    try {
+        legado = JSON.parse(bruto);
+    } catch (e) {
+        return;
+    }
+    if (!legado || typeof legado !== "object" || Array.isArray(legado)) {
+        return;
+    }
+    var usuarioLegado = legado.usuario || {};
+    var clubeLegado = legado.clube || {};
+    var progressoLegado = legado.progresso || {};
+    var presencaLegado = legado.presenca || {};
+    var leiturasLegado = (legado.leituras || {}).ultima || {};
+
+    if (usuarioLegado.nome !== undefined) {
+        await definir("usuario.nome", usuarioLegado.nome);
+    }
+    if (usuarioLegado.email !== undefined) {
+        await definir("usuario.email", usuarioLegado.email);
+    }
+    if (usuarioLegado.descricao !== undefined) {
+        await definir("usuario.descricao", usuarioLegado.descricao);
+    }
+    if (usuarioLegado.logado !== undefined) {
+        await definir("usuario.logado", usuarioLegado.logado);
+    }
+    if (clubeLegado.nome !== undefined) {
+        await definir("clube.nome", clubeLegado.nome);
+    }
+    if (progressoLegado.livro !== undefined) {
+        await definir("progresso.livro", progressoLegado.livro);
+    }
+    if (presencaLegado.proximoEncontro !== undefined) {
+        await definir("presenca.proximoEncontro", presencaLegado.proximoEncontro);
+    }
+    if (leiturasLegado.titulo !== undefined) {
+        await definir("leituras.ultima.titulo", leiturasLegado.titulo);
+    }
+    if (leiturasLegado.autor !== undefined) {
+        await definir("leituras.ultima.autor", leiturasLegado.autor);
+    }
+    if (leiturasLegado.paginas !== undefined) {
+        await definir("leituras.ultima.paginas", leiturasLegado.paginas);
+    }
+
+    localStorage.setItem("cisk_db_migrado", "1");
+}
+
+// =========================================
+// PROTECAO DE ROTAS (auth)
+// =========================================
+
+var paginasProtegidas = [
+    "perfil",
+    "editar perfil",
+    "dados pessoais",
+    "clubes",
+    "nova leitura",
+    "Minha estante"
+];
+
+function normalizarPagina(caminho) {
+    var p = String(caminho || "").split("/").pop();
+    try {
+        p = decodeURIComponent(p);
+    } catch (e) {}
+    return p.replace(/\.html$/i, "");
+}
+
+function paginaAtual() {
+    return normalizarPagina(location.pathname) || "tela inicio";
+}
+
+DB.ready.then(function() {
+    import("https://esm.sh/firebase@10.12.0/auth").then(function(moduloAuth) {
+        moduloAuth.onAuthStateChanged(DB.auth, function(usuario) {
+            var pagina = paginaAtual();
+            if (!usuario && paginasProtegidas.indexOf(pagina) !== -1) {
+                location.href = "cadastro.html";
+                return;
+            }
+            if (usuario && pagina === "cadastro") {
+                location.href = "tela inicio.html";
+            }
+        });
+    });
+});
 
 // =========================================
 // CADASTRO
@@ -137,7 +228,7 @@ if (formCadastro) {
 
     formCadastro.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -190,7 +281,6 @@ if (formCadastro) {
                     : senha;
 
 
-
             if (nome.length < 2) {
 
                 alert(
@@ -202,7 +292,6 @@ if (formCadastro) {
             }
 
 
-
             if (senha.length < 8) {
 
                 alert(
@@ -212,7 +301,6 @@ if (formCadastro) {
                 return;
 
             }
-
 
 
             if (
@@ -229,46 +317,82 @@ if (formCadastro) {
             }
 
 
+            try {
 
-            DB.definir(
-                "usuario.nome",
-                nome
-            );
+                await DB.ready;
 
+                const moduloAuth = await import(
+                    "https://esm.sh/firebase@10.12.0/auth"
+                );
 
-            DB.definir(
-                "usuario.email",
-                email
-            );
+                const credencial =
+                    await moduloAuth.createUserWithEmailAndPassword(
+                        DB.auth,
+                        email,
+                        senha
+                    );
 
+                const uid = credencial.user.uid;
+                const agora = Date.now();
 
-            // Temporário enquanto ainda não existe banco.
-            DB.definir(
-                "usuario.senha",
-                senha
-            );
+                const moduloFirestore = await import(
+                    "https://esm.sh/firebase@10.12.0/firestore"
+                );
 
+                const ref = moduloFirestore.doc(
+                    DB.db,
+                    "usuarios/" + uid
+                );
 
-            DB.definir(
-                "usuario.logado",
-                true
-            );
+                await moduloFirestore.setDoc(
+                    ref,
+                    {
+                        usuario: {
+                            nome: nome,
+                            email: email,
+                            descricao: "",
+                            logado: true,
+                            criadoEm: agora,
+                            atualizadoEm: agora
+                        },
+                        clube: {
+                            nome: ""
+                        },
+                        progresso: {
+                            livro: 0
+                        },
+                        presenca: {
+                            proximoEncontro: ""
+                        },
+                        leituras: {
+                            ultima: {
+                                titulo: "",
+                                autor: "",
+                                paginas: ""
+                            }
+                        }
+                    }
+                );
 
+                await migrarLegado(uid);
 
-            alert(
-                "Conta criada com sucesso!"
-            );
+                alert(
+                    "Conta criada com sucesso!"
+                );
 
-            solicitarBackupJSON();
+                window.location.href = "tela inicio.html";
 
+            } catch (erro) {
 
-            window.location.href ="tela inicio.html";
+                alert(
+                    "Erro ao criar conta: " + (erro && erro.message ? erro.message : erro)
+                );
 
+            }
         }
     );
 
 }
-
 
 
 // =========================================
@@ -279,7 +403,7 @@ if (formLogin) {
 
     formLogin.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -297,67 +421,40 @@ if (formLogin) {
                     .value;
 
 
-            const emailSalvo =
-                DB.obter(
-                    "usuario.email"
+            try {
+
+                await DB.ready;
+
+                const moduloAuth = await import(
+                    "https://esm.sh/firebase@10.12.0/auth"
                 );
 
-
-            const senhaSalva =
-                DB.obter(
-                    "usuario.senha"
+                await moduloAuth.signInWithEmailAndPassword(
+                    DB.auth,
+                    emailDigitado,
+                    senhaDigitada
                 );
 
+                const uid = DB.auth.currentUser ? DB.auth.currentUser.uid : null;
 
-
-            if (
-                !emailSalvo ||
-                !senhaSalva
-            ) {
-
-                alert(
-                    "Nenhuma conta cadastrada. Faça seu cadastro primeiro."
-                );
-
-                mostrarCadastro();
-
-                return;
-
-            }
-
-
-
-            if (
-                emailDigitado === emailSalvo &&
-                senhaDigitada === senhaSalva
-            ) {
-
-                DB.definir(
-                    "usuario.logado",
-                    true
-                );
-
-                solicitarBackupJSON();
-
+                if (uid) {
+                    await migrarLegado(uid);
+                }
 
                 window.location.href =
                     "tela inicio.html";
 
-            }
-
-            else {
+            } catch (erro) {
 
                 alert(
                     "E-mail ou senha incorretos."
                 );
 
             }
-
         }
     );
 
 }
-
 
 
 // =========================================
@@ -370,15 +467,18 @@ const boasVindas =
     );
 
 
-if (boasVindas) {
-
-    const nomeUsuario =
-        DB.obter(
-            "usuario.nome"
-        );
+const nomePerfil =
+    document.getElementById(
+        "nomePerfil"
+    );
 
 
-    if (nomeUsuario) {
+async function inicializarPagina() {
+    await DB.ready;
+
+    const nomeUsuario = await obter("usuario.nome");
+
+    if (boasVindas && nomeUsuario) {
 
         boasVindas.textContent =
             "Bem-vindo, " +
@@ -387,37 +487,15 @@ if (boasVindas) {
 
     }
 
-}
-
-
-
-// =========================================
-// NOME NO PERFIL
-// =========================================
-
-const nomePerfil =
-    document.getElementById(
-        "nomePerfil"
-    );
-
-
-if (nomePerfil) {
-
-    const nomeUsuario =
-        DB.obter(
-            "usuario.nome"
-        );
-
-
-    if (nomeUsuario) {
+    if (nomePerfil && nomeUsuario) {
 
         nomePerfil.textContent =
             nomeUsuario;
 
     }
-
 }
 
+inicializarPagina();
 
 
 // =========================================
@@ -432,9 +510,32 @@ const btnConfirmarEncontro =
 
 if (btnConfirmarEncontro) {
 
-    btnConfirmarEncontro.addEventListener(
-        "click",
-        function() {
+    (async function() {
+
+        btnConfirmarEncontro.addEventListener(
+            "click",
+            async function() {
+
+                btnConfirmarEncontro.textContent =
+                    "Presença Confirmada ✓";
+
+                btnConfirmarEncontro.disabled =
+                    true;
+
+
+                await definir(
+                    "presenca.proximoEncontro",
+                    "confirmada"
+                );
+
+            }
+        );
+
+        const presencaSalva = await obter(
+            "presenca.proximoEncontro"
+        );
+
+        if (presencaSalva === "confirmada") {
 
             btnConfirmarEncontro.textContent =
                 "Presença Confirmada ✓";
@@ -443,33 +544,12 @@ if (btnConfirmarEncontro) {
             btnConfirmarEncontro.disabled =
                 true;
 
-
-            DB.definir(
-                "presenca.proximoEncontro",
-                "confirmada"
-            );
-
         }
-    );
 
+    })();
 
-    if (
-        DB.obter(
-            "presenca.proximoEncontro"
-        ) === "confirmada"
-    ) {
-
-        btnConfirmarEncontro.textContent =
-            "Presença Confirmada ✓";
-
-
-        btnConfirmarEncontro.disabled =
-            true;
-
-    }
 
 }
-
 
 
 // =========================================
@@ -498,7 +578,6 @@ if (btnWorkshop) {
 }
 
 
-
 // =========================================
 // PROGRESSO DO LIVRO
 // =========================================
@@ -521,17 +600,17 @@ const barraProgresso =
     );
 
 
-
-function mostrarProgressoSalvo() {
+async function mostrarProgressoSalvo() {
 
     const progresso =
-        DB.obter(
+        await obter(
             "progresso.livro"
         );
 
 
     if (
         progresso !== null &&
+        progresso !== undefined &&
         textoProgresso &&
         barraProgresso
     ) {
@@ -549,17 +628,14 @@ function mostrarProgressoSalvo() {
 
 }
 
-
-
 mostrarProgressoSalvo();
-
 
 
 if (btnAtualizarProgresso) {
 
     btnAtualizarProgresso.addEventListener(
         "click",
-        function() {
+        async function() {
 
             const progresso =
                 prompt(
@@ -574,7 +650,6 @@ if (btnAtualizarProgresso) {
 
             const valor =
                 Number(progresso);
-
 
 
             if (
@@ -601,7 +676,7 @@ if (btnAtualizarProgresso) {
                 }
 
 
-                DB.definir(
+                await definir(
                     "progresso.livro",
                     valor
                 );
@@ -622,7 +697,6 @@ if (btnAtualizarProgresso) {
 }
 
 
-
 // =========================================
 // NOVA LEITURA
 // =========================================
@@ -637,7 +711,7 @@ if (formNovaLeitura) {
 
     formNovaLeitura.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -662,19 +736,19 @@ if (formNovaLeitura) {
                     .value;
 
 
-            DB.definir(
+            await definir(
                 "leituras.ultima.titulo",
                 titulo
             );
 
 
-            DB.definir(
+            await definir(
                 "leituras.ultima.autor",
                 autor
             );
 
 
-            DB.definir(
+            await definir(
                 "leituras.ultima.paginas",
                 paginas
             );
@@ -686,13 +760,12 @@ if (formNovaLeitura) {
 
 
             window.location.href =
-                "estante.html";
+                "Minha estante.html";
 
         }
     );
 
 }
-
 
 
 // =========================================
@@ -716,7 +789,7 @@ if (formEditarPerfil) {
     if (campoEditarNome) {
 
         const nomeAtual =
-            DB.obter(
+            await obter(
                 "usuario.nome"
             );
 
@@ -725,14 +798,13 @@ if (formEditarPerfil) {
 
             campoEditarNome.value =
                 nomeAtual;
-}
+        }
 
+    }
 
-
-}
     formEditarPerfil.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -750,7 +822,7 @@ if (formEditarPerfil) {
                 );
 
 
-            DB.definir(
+            await definir(
                 "usuario.nome",
                 nome
             );
@@ -758,7 +830,7 @@ if (formEditarPerfil) {
 
             if (descricao) {
 
-                DB.definir(
+                await definir(
                     "usuario.descricao",
                     descricao.value
                 );
@@ -769,8 +841,6 @@ if (formEditarPerfil) {
                 "Perfil atualizado!"
             );
 
-            solicitarBackupJSON();
-
 
             window.location.href =
                 "perfil.html";
@@ -779,7 +849,6 @@ if (formEditarPerfil) {
     );
 
 }
-
 
 
 // =========================================
@@ -809,7 +878,7 @@ if (formDados) {
     if (dadosNome) {
 
         dadosNome.value =
-            DB.obter(
+            await obter(
                 "usuario.nome"
             ) || "";
 
@@ -819,7 +888,7 @@ if (formDados) {
     if (dadosEmail) {
 
         dadosEmail.value =
-            DB.obter(
+            await obter(
                 "usuario.email"
             ) || "";
 
@@ -828,14 +897,14 @@ if (formDados) {
 
     formDados.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
 
             if (dadosNome) {
 
-                DB.definir(
+                await definir(
                     "usuario.nome",
                     dadosNome.value.trim()
                 );
@@ -845,7 +914,7 @@ if (formDados) {
 
             if (dadosEmail) {
 
-                DB.definir(
+                await definir(
                     "usuario.email",
                     dadosEmail.value.trim()
                 );
@@ -867,7 +936,6 @@ if (formDados) {
 }
 
 
-
 // =========================================
 // ADICIONAR CLUBE
 // =========================================
@@ -882,7 +950,7 @@ if (formClube) {
 
     formClube.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -895,7 +963,7 @@ if (formClube) {
 
             if (campo) {
 
-                DB.definir(
+                await definir(
                     "clube.nome",
                     campo.value.trim()
                 );
@@ -907,8 +975,6 @@ if (formClube) {
                 "Clube adicionado!"
             );
 
-            solicitarBackupJSON();
-
 
             window.location.href =
                 "tela inicio.html";
@@ -919,9 +985,8 @@ if (formClube) {
 }
 
 
-
 // =========================================
-// NOTIFICAÇÕES
+// NOTIFICACOES
 // =========================================
 
 const btnSalvarNotificacoes =
@@ -948,7 +1013,6 @@ if (btnSalvarNotificacoes) {
     );
 
 }
-
 
 
 // =========================================
@@ -991,7 +1055,6 @@ const btnFecharResumo =
     );
 
 
-
 function fecharResumo() {
 
     if (modalResumo) {
@@ -1001,10 +1064,7 @@ function fecharResumo() {
         );
 
     }
-
 }
-
-
 
 function configurarBotoesResumo() {
 
@@ -1064,8 +1124,6 @@ function configurarBotoesResumo() {
     );
 }
 
-
-
 function renderizarLivrosFixos() {
 
     var grid = document.getElementById(
@@ -1116,7 +1174,6 @@ function renderizarLivrosFixos() {
     );
 
 }
-
 
 function renderizarEncontros() {
 
@@ -1227,13 +1284,11 @@ function renderizarEncontros() {
 
 }
 
-
 renderizarLivrosFixos();
 
 renderizarEncontros();
 
 configurarBotoesResumo();
-
 
 
 if (fecharModal) {
@@ -1246,7 +1301,6 @@ if (fecharModal) {
 }
 
 
-
 if (btnFecharResumo) {
 
     btnFecharResumo.addEventListener(
@@ -1255,7 +1309,6 @@ if (btnFecharResumo) {
     );
 
 }
-
 
 
 if (modalResumo) {
@@ -1275,9 +1328,7 @@ if (modalResumo) {
 
         }
     );
-
 }
-
 
 
 document.addEventListener(
@@ -1292,7 +1343,6 @@ document.addEventListener(
 
     }
 );
-
 
 
 // =========================================
@@ -1383,6 +1433,27 @@ if (pesquisaLivro) {
 }
 
 
+// =========================================
+// EXPORTAR / IMPORTAR DADOS (JSON) - DESABILITADOS
+// =========================================
+
+const btnExportarDados =
+    document.getElementById(
+        "btnExportarDados"
+    );
+
+const btnImportarDados =
+    document.getElementById(
+        "btnImportarDados"
+    );
+
+if (btnExportarDados) {
+    btnExportarDados.disabled = true;
+}
+
+if (btnImportarDados) {
+    btnImportarDados.disabled = true;
+}
 
 // =========================================
 // SAIR DA CONTA
@@ -1398,133 +1469,29 @@ if (btnSair) {
 
     btnSair.addEventListener(
         "click",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
-
-            DB.definir(
-                "usuario.logado",
-                false
-            );
-
-
-            window.location.href =
-                "acesso.html";
-
-        }
-    );
-
-}
-
-
-
-
-// =========================================
-// EXPORTAR / IMPORTAR DADOS (JSON)
-// =========================================
-
-const btnExportarDados =
-    document.getElementById(
-        "btnExportarDados"
-    );
-
-const btnImportarDados =
-    document.getElementById(
-        "btnImportarDados"
-    );
-
-const inputImportarDados =
-    document.getElementById(
-        "inputImportarDados"
-    );
-
-
-if (btnExportarDados) {
-
-    btnExportarDados.addEventListener(
-        "click",
-        function(event) {
-
-            event.preventDefault();
 
             try {
 
-                DB.exportarUsuario();
+                await DB.ready;
 
-                alert(
-                    "Dados exportados com sucesso! Salve o arquivo em banco de dados/dados-usuario.json."
+                const moduloAuth = await import(
+                    "https://esm.sh/firebase@10.12.0/auth"
                 );
+
+                await moduloAuth.signOut(DB.auth);
 
             } catch (erro) {
 
-                alert(
-                    "Erro ao exportar dados: " + erro
-                );
+                // ignora falha de logout; segue redirecionando
 
             }
 
-        }
-    );
-
-}
-
-
-if (btnImportarDados) {
-
-    btnImportarDados.addEventListener(
-        "click",
-        function(event) {
-
-            event.preventDefault();
-
-            if (inputImportarDados) {
-                inputImportarDados.click();
-            }
-
-        }
-    );
-
-}
-
-
-if (inputImportarDados) {
-
-    inputImportarDados.addEventListener(
-        "change",
-        function() {
-
-            var arquivo = this.files && this.files[0];
-
-            if (!arquivo) {
-                return;
-            }
-
-            var leitor = new FileReader();
-
-            leitor.onload = function() {
-
-                var resultado = DB.importarUsuario(leitor.result);
-
-                if (resultado.ok) {
-
-                    alert(
-                        "Dados importados com sucesso!"
-                    );
-
-                    location.reload();
-
-                } else {
-
-                    alert(
-                        "Erro ao importar: " + resultado.erro
-                    );
-
-                }
-
-            };
-
-            leitor.readAsText(arquivo);
+            window.location.href =
+                "cadastro.html";
 
         }
     );
