@@ -1,4 +1,4 @@
-﻿// Gerado/espelho dos .json â€” manter sincronizado ao editar os arquivos JSON.
+﻿// Gerado/espelho dos .json — manter sincronizado ao editar os arquivos JSON.
 // Fonte de verdade: banco de dados/livros.json e banco de dados/encontros.json
 window.DB_FIXO = {
   livros: [
@@ -9,7 +9,7 @@ window.DB_FIXO = {
       imagem: "imagens/flor-do-vento.jpg",
       alt: "Capa do livro Flor do Vento",
       dataNome: "flor do vento raianne viana",
-      resumo: "Flor do Vento apresenta uma narrativa marcada por sentimentos, descobertas e experiÃªncias humanas. A obra convida o leitor a acompanhar seus personagens em uma jornada de amadurecimento e reflexÃ£o.",
+      resumo: "Flor do Vento apresenta uma narrativa marcada por sentimentos, descobertas e experiências humanas. A obra convida o leitor a acompanhar seus personagens em uma jornada de amadurecimento e reflexão.",
       amazonUrl: "https://www.amazon.com.br/s?k=Flor+do+Vento+Raianne+Viana"
     },
     {
@@ -39,7 +39,7 @@ window.DB_FIXO = {
       imagem: "imagens/aruanda.jpg",
       alt: "Capa do livro Aruanda",
       dataNome: "aruanda robson pinheiro",
-      resumo: "Aruanda apresenta uma narrativa espiritualista que aborda questões relacionadas à espiritualidade, aprendizado, transformação e diferentes experiê ncias do mundo espiritual.",
+      resumo: "Aruanda apresenta uma narrativa espiritualista que aborda questões relacionadas à espiritualidade, aprendizado, transformação e diferentes experiências do mundo espiritual.",
       amazonUrl: "https://www.amazon.com.br/s?k=Aruanda+Robson+Pinheiro"
     }
   ],
@@ -47,7 +47,7 @@ window.DB_FIXO = {
     proximo: {
       etiqueta: "PRÓXIMO ENCONTRO",
       titulo: "Discussão: \"Ficções\" de Jorge Luis Borges",
-      dataHoraTexto: "25 de Junho, As 19:30",
+      dataHoraTexto: "25 de Junho, às 19:30",
       modalidade: "Online",
       meetUrl: "https://meet.google.com/abc-defg-hij"
     },

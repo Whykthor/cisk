@@ -725,30 +725,58 @@ if (btnConfirmarEncontro) {
 
     (async function() {
 
-        btnConfirmarEncontro.addEventListener(
-            "click",
-            async function() {
+            btnConfirmarEncontro.addEventListener(
+                "click",
+                async function() {
 
-                btnConfirmarEncontro.textContent =
-                    "Presença Confirmada ✓";
+                    btnConfirmarEncontro.textContent =
+                        "Presença Confirmada ✓";
 
-                btnConfirmarEncontro.disabled =
-                    true;
+                    btnConfirmarEncontro.disabled =
+                        true;
 
 
-                await definir(
-                    "presenca.proximoEncontro",
-                    "confirmada"
-                );
+                    var elTitulo = document.getElementById(
+                        "proximoEncontroTitulo"
+                    );
+                    var elData = document.getElementById(
+                        "proximoEncontroData"
+                    );
+                    var elModalidade = document.getElementById(
+                        "proximoEncontroModalidade"
+                    );
 
-            }
-        );
+                    var tituloEncontro = elTitulo
+                        ? elTitulo.textContent.trim()
+                        : "";
+                    var dataEncontro = elData
+                        ? elData.textContent.trim()
+                        : "";
+                    var modalidadeEncontro = elModalidade
+                        ? elModalidade.textContent.trim()
+                        : "Online";
+
+                    await definir(
+                        "presenca.proximoEncontro",
+                        tituloEncontro +
+                            "|" +
+                            dataEncontro +
+                            "|" +
+                            modalidadeEncontro
+                    );
+
+                }
+            );
 
         const presencaSalva = await obter(
             "presenca.proximoEncontro"
         );
 
-        if (presencaSalva === "confirmada") {
+        if (
+            presencaSalva &&
+            presencaSalva !== "" &&
+            presencaSalva !== "confirmada"
+        ) {
 
             btnConfirmarEncontro.textContent =
                 "Presença Confirmada ✓";
@@ -1374,7 +1402,7 @@ function renderizarLivrosFixos() {
 
             artigo.innerHTML =
                 '<div class="capa-livro">' +
-                '<img src="' + (livro.imagem || "") + '" alt="' + (livro.alt || "") + '">' +
+                '<img src="' + (livro.imagem || "") + '" alt="' + (livro.alt || livro.titulo || "") + '" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'capa-texto\';s.textContent=this.alt||this.src.split(\"/\").pop().replace(/\\.[^/.]+$/,\'\');this.parentElement.appendChild(s);">' +
                 '</div>' +
                 '<div class="livro-informacoes">' +
                 '<h2>' + (livro.titulo || "") + '</h2>' +
@@ -1569,6 +1597,16 @@ document.addEventListener(
 // PESQUISA LOCAL DA BIBLIOTECA
 // =========================================
 
+function normalizarTexto(texto) {
+    return String(
+        texto || ""
+    )
+        .toLowerCase()
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
 const pesquisaLivro =
     document.getElementById(
         "pesquisaLivro"
@@ -1588,10 +1626,9 @@ if (pesquisaLivro) {
         function() {
 
             const pesquisa =
-                pesquisaLivro
-                    .value
-                    .toLowerCase()
-                    .trim();
+                normalizarTexto(
+                    pesquisaLivro.value
+                );
 
 
             const livros =
@@ -1607,11 +1644,10 @@ if (pesquisaLivro) {
                 function(livro) {
 
                     const texto =
-                        (
+                        normalizarTexto(
                             livro.dataset.nome ||
                             livro.textContent
-                        )
-                        .toLowerCase();
+                        );
 
 
                     if (
