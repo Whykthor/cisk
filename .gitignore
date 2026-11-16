@@ -4,7 +4,7 @@ firestore.key.json
 firebase-adminsdk.json
 firebase-adminsdk-*.json
 firebase-adminsdk-*.json.enc
-firebase-config.js
+
 package-lock.json
 package.json
 /node_modules
