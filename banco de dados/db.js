@@ -71,6 +71,53 @@
       return { proximo: {}, agenda: [] };
     },
 
+    obterEstante: async function() {
+      try {
+        await initPromise;
+      } catch (e) {
+        return [];
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return [];
+      }
+      var ref = fs.collection(db, "usuarios/" + uid + "/estante");
+      var snap = await fs.getDocs(ref);
+      var lista = [];
+      snap.forEach(function(doc) {
+        lista.push(doc.data());
+      });
+      return lista;
+    },
+
+    adicionarEstante: async function(livro) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return livro;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return livro;
+      }
+      var ref = fs.doc(db, "usuarios/" + uid + "/estante/" + String(livro.id));
+      await fs.setDoc(ref, livro);
+      return livro;
+    },
+
+    removerEstante: async function(livroId) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return;
+      }
+      await fs.deleteDoc(fs.doc(db, "usuarios/" + uid + "/estante/" + String(livroId)));
+    },
+
     obter: async function(caminho, padrao) {
       try {
         await initPromise;
