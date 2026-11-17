@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 
 /* =========================================
-   VARIÁVEIS
+   VARIÃVEIS
 ========================================= */
 
 :root {
@@ -181,7 +181,7 @@ header {
 
 
 /* =========================================
-   BOTÕES
+   BOTÃ•ES
 ========================================= */
 
 .btn {
@@ -390,7 +390,7 @@ header {
 
 
 /* =========================================
-   FORMULÁRIOS
+   FORMULÃRIOS
 ========================================= */
 
 .form-group {
@@ -1719,7 +1719,7 @@ header {
 
 
 /* =========================================
-   CONFIGURAÇÕES
+   CONFIGURAÃ‡Ã•ES
 ========================================= */
 
 .titulo-secao {
@@ -1800,7 +1800,7 @@ header {
 
 
 /* =========================================
-   FORMULÁRIOS INTERNOS
+   FORMULÃRIOS INTERNOS
 ========================================= */
 
 .pagina-form {
@@ -1841,7 +1841,7 @@ header {
 
 
 /* =========================================
-   NOTIFICAÇÕES
+   NOTIFICAÃ‡Ã•ES
 ========================================= */
 
 .notificacao-item {
@@ -1865,7 +1865,7 @@ header {
 
 
 /* =========================================
-   BOTÃO SEM ESTILO
+   BOTÃƒO SEM ESTILO
 ========================================= */
 
 .btn-sem-estilo {
@@ -2208,3 +2208,91 @@ footer,
     color: var(--texto-claro);
     font-size: 14px;
 }
+
+.clubes-lista {
+    margin-top: 20px;
+}
+
+.clube-card {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--sombra);
+}
+
+.clube-card h3 {
+    margin: 0;
+    color: var(--roxo);
+    font-size: 20px;
+}
+
+.clube-acoes {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-remover {
+    background: transparent;
+    border: 1px solid var(--vermelho);
+    color: var(--vermelho);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-remover:hover {
+    background: var(--vermelho);
+    color: white;
+}
+
+.encontros-clube {
+    margin-top: 30px;
+}
+
+.encontro-card {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--sombra);
+}
+
+.encontro-info {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: var(--texto);
+}
+
+.encontro-modalidade {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.encontro-modalidade.online {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.encontro-modalidade.presencial {
+    background: #e8f5e9;
+    color: var(--verde);
+}
+
+.vazio-mensagem {
+    text-align: center;
+    color: var(--texto-claro);
+    padding: 30px;
+    font-size: 14px;
+}
+
+

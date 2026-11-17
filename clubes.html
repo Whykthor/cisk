@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Adicionar Clube</title>
+    <title>Clubes</title>
 
     <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
 
@@ -39,46 +39,46 @@
 
 <main class="container pagina-form">
 
-    <section class="card form-card">
+    <h1>Meus Clubes</h1>
 
-        <h1>
-            Adicionar Clube
-        </h1>
+    <form id="formCriarClube">
 
+        <div class="form-group">
 
-        <form id="formClube">
+            <label for="nomeClube">
+                NOME DO CLUBE
+            </label>
 
-            <div class="form-group">
-
-                <label for="nomeClube">
-                    NOME DO CLUBE
-                </label>
-
-                <input
-                    type="text"
-                    id="nomeClube"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-roxo botao-form"
+            <input
+                type="text"
+                id="nomeClube"
+                required
+                placeholder="Nome do clube"
             >
-                Adicionar
-            </button>
 
+        </div>
 
-            <a
-                href="tela inicio.html"
-                class="btn btn-claro botao-form"
-            >
-                Voltar
-            </a>
+        <button
+            type="submit"
+            class="btn btn-roxo botao-form"
+        >
+            Criar Clube
+        </button>
 
-        </form>
+        <a
+            href="tela inicio.html"
+            class="btn btn-claro botao-form"
+        >
+            Voltar
+        </a>
+
+    </form>
+
+    <section id="listaClubes">
+
+        <h2>Seus Clubes</h2>
+
+        <div id="clubesGrid"></div>
 
     </section>
 

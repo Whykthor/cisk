@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Detalhe do Clube - Cisk</title>
+
+    <link rel="icon" type="image/svg+xml" href="cisk_club.svg" />
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container navbar">
+
+        <a
+            href="tela inicio.html"
+            class="logo"
+        >
+            <img src="cisk_club.svg" class="logo-img" alt="Logo">
+        </a>
+
+        <nav class="menu">
+
+            <a href="tela inicio.html">
+                Início
+            </a>
+
+            <a href="livros.html">
+                Livros
+            </a>
+            <a href="encontros.html">
+                Encontros
+            </a>
+
+            <a href="sala-online.html">
+                Sala Online
+            </a>
+
+            <a href="Minha estante.html">
+                Minha Estante
+            </a>
+
+            <a href="perfil.html">
+                Perfil
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container pagina-form">
+
+    <a
+        href="clubes.html"
+        class="btn btn-claro botao-form"
+        id="btnVoltarClubes"
+    >
+        &#8592; Voltar aos Clubes
+    </a>
+
+    <section class="card">
+
+        <h2 id="clubeNome">Clube</h2>
+
+    </section>
+
+    <h3>Novo Encontro</h3>
+
+    <form id="formCriarEncontro">
+
+        <div class="form-group">
+
+            <label for="tituloEncontro">
+                TÍTULO DO ENCONTRO
+            </label>
+
+            <input
+                type="text"
+                id="tituloEncontro"
+                required
+                placeholder="Título do encontro"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="dataEncontro">
+                DATA
+            </label>
+
+            <input
+                type="date"
+                id="dataEncontro"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="horaEncontro">
+                HORA
+            </label>
+
+            <input
+                type="time"
+                id="horaEncontro"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="modalidadeEncontro">
+                MODALIDADE
+            </label>
+
+            <select
+                id="modalidadeEncontro"
+                required
+            >
+                <option value="Online">Online</option>
+                <option value="Presencial">Presencial</option>
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="localOuLinkEncontro">
+                LOCAL OU LINK
+            </label>
+
+            <input
+                type="url"
+                id="localOuLinkEncontro"
+                required
+                placeholder="Link da reunião (Meet) ou endereço local"
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-roxo botao-form"
+        >
+            Criar Encontro
+        </button>
+
+    </form>
+
+    <h3>Encontros deste Clube</h3>
+
+    <div id="encontrosGrid"></div>
+
+</main>
+
+
+<script src="banco%20de%20dados/dados-fixos.js"></script>
+<script src="banco%20de%20dados/db.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>

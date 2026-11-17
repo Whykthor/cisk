@@ -1,4 +1,4 @@
-rules_version = '2';
+﻿rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -21,6 +21,16 @@ service cloud.firestore {
 
     // Estante pessoal do usuário: somente o próprio usuário lê/escreve seus livros
     match /usuarios/{uid}/estante/{livroId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Clubes do usuário: somente o próprio usuário lê/escreve seus clubes
+    match /usuarios/{uid}/clubes/{clubeId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Encontros de um clube: somente o próprio usuário lê/escreve os encontros dos seus clubes
+    match /usuarios/{uid}/clubes/{clubeId}/encontros/{encontroId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 

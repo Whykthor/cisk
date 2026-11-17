@@ -1,4 +1,4 @@
-// =========================================
+﻿// =========================================
 // CAMADA DE DADOS (db.js)
 // Firebase Authentication + Firestore (NoSQL)
 // localStorage mantido apenas para one-time migration
@@ -152,9 +152,125 @@
       atualizacao["atualizadoEm"] = Date.now();
       await fs.setDoc(ref, atualizacao, { merge: true });
       return valor;
+    },
+
+    obterClubes: async function() {
+      try {
+        await initPromise;
+      } catch (e) {
+        return [];
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return [];
+      }
+      var ref = fs.collection(db, "usuarios/" + uid + "/clubes");
+      var snap = await fs.getDocs(ref);
+      var lista = [];
+      snap.forEach(function(doc) {
+        var item = doc.data();
+        item.id = doc.id;
+        lista.push(item);
+      });
+      return lista;
+    },
+
+    adicionarClube: async function(clube) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return clube;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return clube;
+      }
+      var ref = fs.doc(db, "usuarios/" + uid + "/clubes");
+      var clubeId = ref.id;
+      var agora = Date.now();
+      var dados = {
+        nome: clube.nome,
+        criadoEm: agora,
+        atualizadoEm: agora
+      };
+      await fs.setDoc(ref, dados);
+      return Object.assign({}, clube, { id: clubeId, criadoEm: agora, atualizadoEm: agora });
+    },
+
+    removerClube: async function(clubeId) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return;
+      }
+      await fs.deleteDoc(fs.doc(db, "usuarios/" + uid + "/clubes/" + String(clubeId)));
+    },
+
+    obterEncontrosClube: async function(clubeId) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return [];
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !clubeId || !fs || !db) {
+        return [];
+      }
+      var ref = fs.collection(db, "usuarios/" + uid + "/clubes/" + String(clubeId) + "/encontros");
+      var snap = await fs.getDocs(ref);
+      var lista = [];
+      snap.forEach(function(doc) {
+        var item = doc.data();
+        item.id = doc.id;
+        lista.push(item);
+      });
+      return lista;
+    },
+
+    adicionarEncontroClube: async function(clubeId, encontro) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return encontro;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !clubeId || !fs || !db) {
+        return encontro;
+      }
+      var ref = fs.doc(db, "usuarios/" + uid + "/clubes/" + String(clubeId) + "/encontros");
+      var encontroId = ref.id;
+      var agora = Date.now();
+      var dados = {
+        titulo: encontro.titulo,
+        data: encontro.data,
+        hora: encontro.hora,
+        modalidade: encontro.modalidade,
+        localOuLink: encontro.localOuLink,
+        criadoEm: agora
+      };
+      await fs.setDoc(ref, dados);
+      return Object.assign({}, encontro, { id: encontroId, criadoEm: agora });
+    },
+
+    removerEncontroClube: async function(clubeId, encontroId) {
+      try {
+        await initPromise;
+      } catch (e) {
+        return;
+      }
+      var uid = auth && auth.currentUser ? auth.currentUser.uid : null;
+      if (!uid || !fs || !db) {
+        return;
+      }
+      await fs.deleteDoc(fs.doc(db, "usuarios/" + uid + "/clubes/" + String(clubeId) + "/encontros/" + String(encontroId)));
     }
   };
 
   window.DB = DB;
 
 })();
+

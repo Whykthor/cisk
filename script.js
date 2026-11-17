@@ -1,4 +1,4 @@
-// =========================================
+﻿// =========================================
 // LOGIN E CADASTRO
 // =========================================
 
@@ -141,16 +141,16 @@ function mostrarNotificacao(mensagem, tipo = "info") {
     toast.className = "toast toast-" + tipo;
 
     const icones = {
-        erro: "✕",
-        sucesso: "✔",
-        aviso: "⚠",
-        info: "ℹ"
+        erro: "âœ•",
+        sucesso: "âœ”",
+        aviso: "âš ",
+        info: "â„¹"
     };
 
     toast.innerHTML =
         '<div class="toast-icone">' + (icones[tipo] || icones.info) + '</div>' +
         '<div>' + mensagem + '</div>' +
-        '<button class="toast-fecha" aria-label="Fechar">✕</button>';
+        '<button class="toast-fecha" aria-label="Fechar">âœ•</button>';
 
     toast.querySelector(".toast-fecha").addEventListener("click", function() {
         toast.style.animation = "toastSair 0.3s ease-in forwards";
@@ -303,7 +303,7 @@ async function sincronizarDadosUsuario() {
         if (proximo && elEncontroData) {
             var partes3 = String(proximo).split("|");
             if (partes3[0] && partes3[1]) {
-                elEncontroData.textContent = partes3[0] + " de " + partes3[1] + ", às 19:30";
+                elEncontroData.textContent = partes3[0] + " de " + partes3[1] + ", Ã s 19:30";
             }
         }
 
@@ -521,7 +521,7 @@ if (formCadastro) {
             ) {
 
                 mostrarNotificacao(
-                    "As senhas não são iguais.",
+                    "As senhas nÃ£o sÃ£o iguais.",
                     "erro"
                 );
 
@@ -733,7 +733,7 @@ if (btnConfirmarEncontro) {
                 async function() {
 
                     btnConfirmarEncontro.textContent =
-                        "Presença Confirmada ✓";
+                        "PresenÃ§a Confirmada âœ“";
 
                     btnConfirmarEncontro.disabled =
                         true;
@@ -782,7 +782,7 @@ if (btnConfirmarEncontro) {
         ) {
 
             btnConfirmarEncontro.textContent =
-                "Presença Confirmada ✓";
+                "PresenÃ§a Confirmada âœ“";
 
 
             btnConfirmarEncontro.disabled =
@@ -879,7 +879,7 @@ if (inputLinkSala && btnSalvarLinkSala) {
             } catch (erro) {
 
                 mostrarNotificacao(
-                    "Não foi possível salvar o link da sala.",
+                    "NÃ£o foi possÃ­vel salvar o link da sala.",
                     "erro"
                 );
 
@@ -1013,7 +1013,7 @@ if (btnAtualizarProgresso) {
                             inputValor.value = "";
                         } else {
                             mostrarNotificacao(
-                                "Digite um número entre 0 e 100.",
+                                "Digite um nÃºmero entre 0 e 100.",
                                 "aviso"
                             );
                         }
@@ -1126,7 +1126,7 @@ if (formNovaLeitura) {
 
 
             mostrarNotificacao(
-                "Livro adicionado à sua estante!",
+                "Livro adicionado Ã  sua estante!",
                 "sucesso"
             );
 
@@ -1377,7 +1377,7 @@ if (btnSalvarNotificacoes) {
         function() {
 
             mostrarNotificacao(
-                "Configurações de notificações salvas!",
+                "ConfiguraÃ§Ãµes de notificaÃ§Ãµes salvas!",
                 "sucesso"
             );
 
@@ -1484,7 +1484,7 @@ function configurarBotoesResumo() {
 
                         modalTexto.textContent =
                             botao.dataset.resumo ||
-                            "Resumo não disponível.";
+                            "Resumo nÃ£o disponÃ­vel.";
 
                     }
 
@@ -1534,10 +1534,10 @@ function renderizarEncontros() {
     }
 
     if (proximo.dataHoraTexto && horaEl) {
-        horaEl.textContent = "Hoje às " + String(proximo.dataHoraTexto).replace(/.*às\s*/, "");
+        horaEl.textContent = "Hoje Ã s " + String(proximo.dataHoraTexto).replace(/.*Ã s\s*/, "");
     }
 
-    // encontros.html - próximo encontro
+    // encontros.html - prÃ³ximo encontro
     var proximoDataEl = document.getElementById("proximoEncontroData");
     var proximoModalidadeEl = document.getElementById("proximoEncontroModalidade");
     var linkSalaEl = document.getElementById("linkSalaEncontro");
@@ -1825,7 +1825,7 @@ if (btnSair) {
 
 }
 
-// Sincroniza dados do usuário ao carregar a página (fallback se onAuthStateChanged ainda não disparou)
+// Sincroniza dados do usuÃ¡rio ao carregar a pÃ¡gina (fallback se onAuthStateChanged ainda nÃ£o disparou)
 if (DB.auth && DB.auth.currentUser) {
     sincronizarDadosUsuario();
 }
@@ -1861,7 +1861,7 @@ function gerarIdOpenLibrary(item) {
 }
 
 function converterItemOpenLibrary(item) {
-    var titulo = item.title || "Título não disponível";
+    var titulo = item.title || "TÃ­tulo nÃ£o disponÃ­vel";
     var autor =
         item.author_name && item.author_name[0]
             ? item.author_name[0]
@@ -1909,7 +1909,7 @@ async function buscarLivrosOpenLibrary(termo) {
         });
         if (!resposta.ok) {
             throw new Error(
-                "Open Library indisponível (" + resposta.status + ")"
+                "Open Library indisponÃ­vel (" + resposta.status + ")"
             );
         }
         var dados = await resposta.json();
@@ -1960,7 +1960,7 @@ function renderizarLivros(lista, opcoes) {
                     '" data-amazonurl="' +
                     escapeHtml(livro.amazonUrl) +
                     '">' +
-                    "Adicionar à estante" +
+                    "Adicionar Ã  estante" +
                     "</button>";
             }
 
@@ -2039,19 +2039,19 @@ function renderizarLivros(lista, opcoes) {
                                 )
                             ) {
                                 mostrarNotificacao(
-                                    "Este livro já está na sua estante.",
+                                    "Este livro jÃ¡ estÃ¡ na sua estante.",
                                     "aviso"
                                 );
                                 return;
                             }
                             await DB.adicionarEstante(livro);
                             mostrarNotificacao(
-                                "Livro adicionado à sua estante!",
+                                "Livro adicionado Ã  sua estante!",
                                 "sucesso"
                             );
                         } catch (erro) {
                             mostrarNotificacao(
-                                "Não foi possível adicionar à estante.",
+                                "NÃ£o foi possÃ­vel adicionar Ã  estante.",
                                 "erro"
                             );
                         }
@@ -2110,7 +2110,7 @@ if (btnBuscarApi && pesquisaLivro) {
                     { adicionarEstante: false }
                 );
                 mostrarNotificacao(
-                    "Não foi possível consultar a API. Exibindo a biblioteca local.",
+                    "NÃ£o foi possÃ­vel consultar a API. Exibindo a biblioteca local.",
                     "aviso"
                 );
             } finally {
@@ -2141,7 +2141,7 @@ async function renderizarEstante() {
     if (!uid) {
         var aviso = document.createElement("p");
         aviso.className = "estante-vazia";
-        aviso.textContent = "Faça login para ver sua estante.";
+        aviso.textContent = "FaÃ§a login para ver sua estante.";
         aviso.style.gridColumn = "1 / -1";
         grid.appendChild(aviso);
         return;
@@ -2165,7 +2165,7 @@ async function renderizarEstante() {
         var vazio = document.createElement("p");
         vazio.className = "estante-vazia";
         vazio.textContent =
-            "Sua estante está vazia. Busque livros na biblioteca e clique em \"Adicionar à estante\".";
+            "Sua estante estÃ¡ vazia. Busque livros na biblioteca e clique em \"Adicionar Ã  estante\".";
         vazio.style.gridColumn = "1 / -1";
         grid.appendChild(vazio);
         return;
@@ -2181,7 +2181,7 @@ async function renderizarEstante() {
                 escapeHtml(livro.imagem || "") +
                 '" alt="' +
                 escapeHtml(livro.titulo || "") +
-                '" onerror="this.style.display=\'none\';var s=this.parentElement.querySelector(\'.capa-texto\');if(s){s.style.display=\'flex\';s.textContent=this.alt||\'Capa indisponível\';}">' +
+                '" onerror="this.style.display=\'none\';var s=this.parentElement.querySelector(\'.capa-texto\');if(s){s.style.display=\'flex\';s.textContent=this.alt||\'Capa indisponÃ­vel\';}">' +
                 '<span class="capa-texto" style="display:none">' +
                 escapeHtml(livro.titulo || "Livro") +
                 '</span>' +
@@ -2206,4 +2206,259 @@ renderizarEstante();
 DB.ready.then(function() {
     renderizarEstante();
 });
+
+
+// =========================================
+// CLUBES E ENCONTROS
+// =========================================
+
+async function renderizarClubes() {
+    var grid = document.getElementById("clubesGrid");
+    if (!grid) {
+        return;
+    }
+
+    var uid =
+        DB.auth && DB.auth.currentUser
+            ? DB.auth.currentUser.uid
+            : null;
+
+    grid.innerHTML = "";
+
+    if (!uid) {
+        var aviso = document.createElement("p");
+        aviso.textContent = "FaÃ§a login para ver seus clubes.";
+        aviso.style.gridColumn = "1 / -1";
+        grid.appendChild(aviso);
+        return;
+    }
+
+    var clubes = await DB.obterClubes();
+    if (!clubes || !clubes.length) {
+        var vazio = document.createElement("p");
+        vazio.textContent = "Nenhum clube encontrado.";
+        vazio.style.gridColumn = "1 / -1";
+        grid.appendChild(vazio);
+        return;
+    }
+
+    clubes.forEach(
+        function(clube) {
+            var card = document.createElement("article");
+            card.className = "clube-card";
+            card.innerHTML =
+                '<h3>' + escapeHtml(clube.nome || "") + '</h3>' +
+                '<a href="detalhe-clube.html?id=' + escapeHtml(clube.id) + '" class="btn btn-ver">Ver encontros</a>' +
+                '<button type="button" class="btn btn-remover" data-id="' + escapeHtml(clube.id) + '">Remover</button>';
+            grid.appendChild(card);
+        }
+    );
+
+    grid.querySelectorAll(".btn-remover").forEach(
+        function(botao) {
+            botao.addEventListener(
+                "click",
+                async function() {
+                    await removerClubeUI(botao.dataset.id);
+                }
+            );
+        }
+    );
+}
+
+async function criarClubeUI(nome) {
+    var nomeTratado = (nome || "").trim();
+    if (!nomeTratado) {
+        mostrarNotificacao("Digite o nome do clube.", "erro");
+        return;
+    }
+
+    await DB.adicionarClube({
+        nome: nomeTratado,
+        criadoEm: Date.now(),
+        atualizadoEm: Date.now()
+    });
+
+    mostrarNotificacao("Clube criado com sucesso.", "sucesso");
+    renderizarClubes();
+}
+
+async function renderizarEncontrosClube(clubeId) {
+    var grid = document.getElementById("encontrosGrid");
+    if (!grid) {
+        return;
+    }
+
+    grid.innerHTML = "";
+
+    var encontros = await DB.obterEncontrosClube(clubeId);
+    if (!encontros || !encontros.length) {
+        var vazio = document.createElement("p");
+        vazio.textContent = "Nenhum encontro encontrado.";
+        vazio.style.gridColumn = "1 / -1";
+        grid.appendChild(vazio);
+        return;
+    }
+
+    encontros.forEach(
+        function(encontro) {
+            var card = document.createElement("article");
+            card.className = "encontro-card";
+            card.innerHTML =
+                '<h4>' + escapeHtml(encontro.titulo || "") + '</h4>' +
+                '<p><strong>Data:</strong> ' + escapeHtml(encontro.data || "") + '</p>' +
+                '<p><strong>Hora:</strong> ' + escapeHtml(encontro.hora || "") + '</p>' +
+                '<p><strong>Modalidade:</strong> ' + escapeHtml(encontro.modalidade || "") + '</p>' +
+                '<p><strong>Local/link:</strong> ' + escapeHtml(encontro.localOuLink || "") + '</p>' +
+                '<button type="button" class="btn btn-remover" data-clube="' + escapeHtml(clubeId) + '" data-id="' + escapeHtml(encontro.id) + '">Remover</button>';
+            grid.appendChild(card);
+        }
+    );
+
+    grid.querySelectorAll(".btn-remover").forEach(
+        function(botao) {
+            botao.addEventListener(
+                "click",
+                async function() {
+                    await removerEncontroClubeUI(botao.dataset.clube, botao.dataset.id);
+                }
+            );
+        }
+    );
+}
+
+async function criarEncontroUI(clubeId, encontro) {
+    await DB.adicionarEncontroClube(clubeId, encontro);
+    mostrarNotificacao("Encontro criado com sucesso.", "sucesso");
+    renderizarEncontrosClube(clubeId);
+}
+
+async function removerClubeUI(clubeId) {
+    await DB.removerClube(clubeId);
+    mostrarNotificacao("Clube removido com sucesso.", "sucesso");
+    renderizarClubes();
+}
+
+async function removerEncontroClubeUI(clubeId, encontroId) {
+    await DB.removerEncontroClube(clubeId, encontroId);
+    mostrarNotificacao("Encontro removido com sucesso.", "sucesso");
+    renderizarEncontrosClube(clubeId);
+}
+
+// =========================================
+// WIRE-UP: clubes.html
+// =========================================
+
+var formCriarClube = document.getElementById("formCriarClube");
+if (formCriarClube) {
+    formCriarClube.addEventListener(
+        "submit",
+        async function(evento) {
+            evento.preventDefault();
+
+            var campoNome = document.getElementById("nomeClube");
+            var nome = campoNome ? campoNome.value.trim() : "";
+
+            if (!nome) {
+                mostrarNotificacao("Digite o nome do clube.", "erro");
+                return;
+            }
+
+            await criarClubeUI(nome);
+
+            if (campoNome) {
+                campoNome.value = "";
+            }
+        }
+    );
+}
+
+// Carregamento inicial de clubes
+renderizarClubes();
+DB.ready.then(function() {
+    renderizarClubes();
+});
+
+// =========================================
+// WIRE-UP: detalhe-clube.html
+// =========================================
+
+var formCriarEncontro = document.getElementById("formCriarEncontro");
+if (formCriarEncontro) {
+    formCriarEncontro.addEventListener(
+        "submit",
+        async function(evento) {
+            evento.preventDefault();
+
+            var campoTitulo = document.getElementById("tituloEncontro");
+            var campoData = document.getElementById("dataEncontro");
+            var campoHora = document.getElementById("horaEncontro");
+            var campoModalidade = document.getElementById("modalidadeEncontro");
+            var campoLocal = document.getElementById("localOuLinkEncontro");
+
+            var titulo = campoTitulo ? campoTitulo.value.trim() : "";
+            var data = campoData ? campoData.value.trim() : "";
+            var hora = campoHora ? campoHora.value.trim() : "";
+            var modalidade = campoModalidade ? campoModalidade.value.trim() : "";
+            var localOuLink = campoLocal ? campoLocal.value.trim() : "";
+
+            if (!titulo || !data || !hora || !localOuLink) {
+                mostrarNotificacao(
+                    "Preencha tÃ­tulo, data, hora e local/link.",
+                    "erro"
+                );
+                return;
+            }
+
+            var clubeId = new URLSearchParams(window.location.search).get("id");
+            if (!clubeId) {
+                mostrarNotificacao("Clube nÃ£o identificado.", "erro");
+                return;
+            }
+
+            var encontro = {
+                titulo: titulo,
+                data: data,
+                hora: hora,
+                modalidade: modalidade,
+                localOuLink: localOuLink
+            };
+
+            await criarEncontroUI(clubeId, encontro);
+            formCriarEncontro.reset();
+        }
+    );
+}
+
+// Carregamento da pÃ¡gina de detalhe do clube
+var paramsDetalhe = new URLSearchParams(window.location.search);
+var clubeIdDetalhe = paramsDetalhe.get("id");
+var elClubeNome = document.getElementById("clubeNome");
+
+if (clubeIdDetalhe && elClubeNome) {
+    DB.ready.then(async function() {
+        var clubes = await DB.obterClubes();
+        var clube =
+            clubes &&
+            clubes.find(
+                function(c) {
+                    return String(c.id) === String(clubeIdDetalhe);
+                }
+            );
+        if (clube) {
+            elClubeNome.textContent = clube.nome || "";
+        }
+        renderizarEncontrosClube(clubeIdDetalhe);
+    });
+}
+
+var btnVoltarClubes = document.getElementById("btnVoltarClubes");
+if (btnVoltarClubes) {
+    btnVoltarClubes.addEventListener(
+        "click",
+        function() {
+            window.location.href = "clubes.html";
+        }
+    );
+}
 
