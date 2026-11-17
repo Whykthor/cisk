@@ -423,6 +423,9 @@ DB.ready.then(function() {
             if (usuario) {
                 sincronizarDadosUsuario();
             }
+            if (document.getElementById("estanteGrid")) {
+                renderizarEstante();
+            }
         });
     });
 });
@@ -939,7 +942,7 @@ if (btnAtualizarProgresso) {
     );
 }
 
-function aplicarProgresso(valor) {
+async function aplicarProgresso(valor) {
 
     if (textoProgresso) {
 
@@ -958,7 +961,7 @@ function aplicarProgresso(valor) {
     }
 
 
-    definir(
+    await definir(
         "progresso.livro",
         valor
     );
@@ -1404,54 +1407,7 @@ function configurarBotoesResumo() {
 }
 
 function renderizarLivrosFixos() {
-
-    var grid = document.getElementById(
-        "bibliotecaGrid"
-    );
-
-    if (!grid) {
-        return;
-    }
-
-    var livros = DB.obterLivros();
-
-    grid.innerHTML = "";
-
-    livros.forEach(
-        function(livro) {
-
-            var artigo = document.createElement(
-                "article"
-            );
-
-            artigo.className = "biblioteca-livro";
-
-            artigo.setAttribute(
-                "data-nome",
-                livro.dataNome || ""
-            );
-
-            artigo.innerHTML =
-                '<div class="capa-livro">' +
-                '<img src="' + (livro.imagem || "") + '" alt="' + (livro.alt || livro.titulo || "") + '" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'capa-texto\';s.textContent=this.alt||this.src.split(\"/\").pop().replace(/\\.[^/.]+$/,\'\');this.parentElement.appendChild(s);">' +
-                '</div>' +
-                '<div class="livro-informacoes">' +
-                '<h2>' + (livro.titulo || "") + '</h2>' +
-                '<p class="livro-autor">' + (livro.autor || "") + '</p>' +
-                '<button type="button" class="btn-resumo" data-titulo="' + (livro.titulo || "") + '" data-autor="' + (livro.autor || "") + '" data-resumo="' + (livro.resumo || "") + '">' +
-                'Ver resumo' +
-                '</button>' +
-                '<a href="' + (livro.amazonUrl || "") + '" target="_blank" rel="noopener noreferrer" class="btn-amazon">' +
-                '<span class="amazon-icone">a</span>' +
-                'Comprar na Amazon' +
-                '</a>' +
-                '</div>';
-
-            grid.appendChild(artigo);
-
-        }
-    );
-
+    renderizarLivros(DB.obterLivros(), { adicionarEstante: false });
 }
 
 function renderizarEncontros() {
@@ -1801,4 +1757,374 @@ if (btnSair) {
 if (DB.auth && DB.auth.currentUser) {
     sincronizarDadosUsuario();
 }
+
+// =========================================
+// BIBLIOTECA - BUSCA NA API (OPEN LIBRARY) E ESTANTE
+// =========================================
+
+function escapeHtml(texto) {
+    return String(
+        texto || ""
+    )
+        .replace(
+            /[&<>"']/g,
+            function(caractere) {
+                var entidades = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                };
+                return entidades[caractere];
+            }
+        );
+}
+
+function gerarIdOpenLibrary(item) {
+    var base =
+        item.key ||
+        (item.title + "|" + (item.author_name ? item.author_name[0] : ""));
+    return "ol-" + String(base).replace(/[^a-zA-Z0-9_-]/g, "-");
+}
+
+function converterItemOpenLibrary(item) {
+    var titulo = item.title || "Título não disponível";
+    var autor =
+        item.author_name && item.author_name[0]
+            ? item.author_name[0]
+            : "Autor desconhecido";
+    var imagem = item.cover_i
+        ? "https://covers.openlibrary.org/b/id/" + item.cover_i + "-M.jpg"
+        : "";
+    var resumo = "";
+    if (
+        item.first_sentence &&
+        item.first_sentence[0] &&
+        item.first_sentence[0].value
+    ) {
+        resumo = item.first_sentence[0].value;
+    }
+    return {
+        id: gerarIdOpenLibrary(item),
+        titulo: titulo,
+        autor: autor,
+        imagem: imagem,
+        alt: "Capa do livro " + escapeHtml(titulo),
+        dataNome: normalizarTexto(titulo + " " + autor),
+        resumo: resumo,
+        amazonUrl:
+            "https://www.amazon.com.br/s?k=" +
+            encodeURIComponent(titulo + " " + autor)
+    };
+}
+
+async function buscarLivrosOpenLibrary(termo) {
+    var url =
+        "https://openlibrary.org/search.json?q=" +
+        encodeURIComponent(termo) +
+        "&limit=10";
+    var controle = new AbortController();
+    var temporizador = setTimeout(
+        function() {
+            controle.abort();
+        },
+        10000
+    );
+    try {
+        var resposta = await fetch(url, {
+            signal: controle.signal
+        });
+        if (!resposta.ok) {
+            throw new Error(
+                "Open Library indisponível (" + resposta.status + ")"
+            );
+        }
+        var dados = await resposta.json();
+        return (dados.docs || []).map(converterItemOpenLibrary);
+    } finally {
+        clearTimeout(temporizador);
+    }
+}
+
+var modoApi = false;
+var livrosApi = [];
+
+function renderizarLivros(lista, opcoes) {
+    var adicionarEstante = !!(opcoes && opcoes.adicionarEstante);
+    var grid = document.getElementById(
+        "bibliotecaGrid"
+    );
+
+    if (!grid) {
+        configurarBotoesResumo();
+        return;
+    }
+
+    grid.innerHTML = "";
+
+    lista.forEach(
+        function(livro) {
+            var artigo = document.createElement(
+                "article"
+            );
+            artigo.className = "biblioteca-livro";
+            artigo.setAttribute(
+                "data-nome",
+                livro.dataNome || ""
+            );
+
+            var btnEstanteHtml = "";
+            if (adicionarEstante) {
+                btnEstanteHtml =
+                    '<button type="button" class="btn btn-roxo btn-estante" data-id="' +
+                    escapeHtml(livro.id) +
+                    '" data-titulo="' +
+                    escapeHtml(livro.titulo) +
+                    '" data-autor="' +
+                    escapeHtml(livro.autor) +
+                    '" data-imagem="' +
+                    escapeHtml(livro.imagem) +
+                    '" data-amazonurl="' +
+                    escapeHtml(livro.amazonUrl) +
+                    '">' +
+                    "Adicionar à estante" +
+                    "</button>";
+            }
+
+            artigo.innerHTML =
+                '<div class="capa-livro">' +
+                '<img src="' +
+                escapeHtml(livro.imagem) +
+                '" alt="' +
+                escapeHtml(livro.alt || livro.titulo || "") +
+                '" onerror="this.style.display=\'none\';var s=document.createElement(\'span\');s.className=\'capa-texto\';s.textContent=this.alt||this.src.split(\"/\").pop().replace(/\\.[^/.]+$/,\'\');this.parentElement.appendChild(s);">' +
+                '</div>' +
+                '<div class="livro-informacoes">' +
+                '<h2>' +
+                escapeHtml(livro.titulo || "") +
+                '</h2>' +
+                '<p class="livro-autor">' +
+                escapeHtml(livro.autor || "") +
+                '</p>' +
+                '<button type="button" class="btn-resumo" data-titulo="' +
+                escapeHtml(livro.titulo || "") +
+                '" data-autor="' +
+                escapeHtml(livro.autor || "") +
+                '" data-resumo="' +
+                escapeHtml(livro.resumo || "") +
+                '">' +
+                "Ver resumo" +
+                '</button>' +
+                btnEstanteHtml +
+                '<a href="' +
+                escapeHtml(livro.amazonUrl || "") +
+                '" target="_blank" rel="noopener noreferrer" class="btn-amazon">' +
+                '<span class="amazon-icone">a</span>' +
+                "Comprar na Amazon" +
+                '</a>' +
+                '</div>';
+
+            grid.appendChild(artigo);
+        }
+    );
+
+    configurarBotoesResumo();
+
+    if (adicionarEstante) {
+        grid.querySelectorAll(".btn-estante").forEach(
+            function(botao) {
+                botao.addEventListener(
+                    "click",
+                    async function() {
+                        var id = botao.dataset.id;
+                        var livroApi = livrosApi.find(
+                            function(l) {
+                                return String(l.id) === String(id);
+                            }
+                        );
+                        var livro =
+                            livroApi ||
+                            {
+                                id: id,
+                                titulo: botao.dataset.titulo || "",
+                                autor: botao.dataset.autor || "",
+                                imagem: botao.dataset.imagem || "",
+                                amazonUrl: botao.dataset.amazonurl || "",
+                                dataNome: normalizarTexto(
+                                    (botao.dataset.titulo || "") +
+                                        " " +
+                                        (botao.dataset.autor || "")
+                                )
+                            };
+                        try {
+                            var estante = await DB.obterEstante();
+                            if (
+                                estante.some(
+                                    function(item) {
+                                        return String(item.id) === String(livro.id);
+                                    }
+                                )
+                            ) {
+                                mostrarNotificacao(
+                                    "Este livro já está na sua estante.",
+                                    "aviso"
+                                );
+                                return;
+                            }
+                            await DB.adicionarEstante(livro);
+                            mostrarNotificacao(
+                                "Livro adicionado à sua estante!",
+                                "sucesso"
+                            );
+                        } catch (erro) {
+                            mostrarNotificacao(
+                                "Não foi possível adicionar à estante.",
+                                "erro"
+                            );
+                        }
+                    }
+                );
+            }
+        );
+    }
+}
+
+var btnBuscarApi = document.getElementById(
+    "btnBuscarApi"
+);
+
+if (btnBuscarApi && pesquisaLivro) {
+    btnBuscarApi.addEventListener(
+        "click",
+        async function() {
+            var termo = pesquisaLivro.value.trim();
+
+            if (!termo) {
+                modoApi = false;
+                livrosApi = [];
+                renderizarLivros(
+                    DB.obterLivros(),
+                    { adicionarEstante: false }
+                );
+                if (nenhumLivro) {
+                    nenhumLivro.style.display = "none";
+                }
+                return;
+            }
+
+            var textoBotao = btnBuscarApi.textContent;
+            btnBuscarApi.textContent = "Buscando...";
+            btnBuscarApi.disabled = true;
+
+            try {
+                var resultados = await buscarLivrosOpenLibrary(termo);
+                modoApi = true;
+                livrosApi = resultados;
+                renderizarLivros(resultados, {
+                    adicionarEstante: true
+                });
+                if (nenhumLivro) {
+                    nenhumLivro.style.display =
+                        resultados.length === 0
+                            ? "block"
+                            : "none";
+                }
+            } catch (erro) {
+                modoApi = false;
+                livrosApi = [];
+                renderizarLivros(
+                    DB.obterLivros(),
+                    { adicionarEstante: false }
+                );
+                mostrarNotificacao(
+                    "Não foi possível consultar a API. Exibindo a biblioteca local.",
+                    "aviso"
+                );
+            } finally {
+                btnBuscarApi.disabled = false;
+                btnBuscarApi.textContent = textoBotao;
+            }
+        }
+    );
+}
+
+async function renderizarEstante() {
+    var grid = document.getElementById("estanteGrid");
+    if (!grid) {
+        return;
+    }
+
+    var linkAdicionar = grid.querySelector(".adicionar");
+    var uid =
+        DB.auth && DB.auth.currentUser
+            ? DB.auth.currentUser.uid
+            : null;
+
+    grid.innerHTML = "";
+    if (linkAdicionar) {
+        grid.appendChild(linkAdicionar);
+    }
+
+    if (!uid) {
+        var aviso = document.createElement("p");
+        aviso.className = "estante-vazia";
+        aviso.textContent = "Faça login para ver sua estante.";
+        aviso.style.gridColumn = "1 / -1";
+        grid.appendChild(aviso);
+        return;
+    }
+
+    var estante = await DB.obterEstante();
+
+    grid.innerHTML = "";
+    if (linkAdicionar) {
+        grid.appendChild(linkAdicionar);
+    }
+
+    if (!estante || !estante.length) {
+        var vazio = document.createElement("p");
+        vazio.className = "estante-vazia";
+        vazio.textContent =
+            "Sua estante está vazia. Busque livros na biblioteca e clique em \"Adicionar à estante\".";
+        vazio.style.gridColumn = "1 / -1";
+        grid.appendChild(vazio);
+        return;
+    }
+
+    estante.forEach(
+        function(livro) {
+            var artigo = document.createElement("article");
+            artigo.className = "livro";
+            artigo.innerHTML =
+                '<div class="capa-lista">' +
+                '<img src="' +
+                escapeHtml(livro.imagem || "") +
+                '" alt="' +
+                escapeHtml(livro.titulo || "") +
+                '" onerror="this.style.display=\'none\';var s=this.parentElement.querySelector(\'.capa-texto\');if(s){s.style.display=\'flex\';s.textContent=this.alt||\'Capa indisponível\';}">' +
+                '<span class="capa-texto" style="display:none">' +
+                escapeHtml(livro.titulo || "Livro") +
+                '</span>' +
+                '</div>' +
+                '<h4>' +
+                escapeHtml(livro.titulo || "") +
+                '</h4>' +
+                '<p class="livro-autor">' +
+                escapeHtml(livro.autor || "") +
+                '</p>' +
+                (livro.amazonUrl
+                    ? '<a href="' +
+                      escapeHtml(livro.amazonUrl) +
+                      '" target="_blank" rel="noopener noreferrer" class="btn btn-amazon"><span class="amazon-icone">a</span>Comprar na Amazon</a>'
+                    : "");
+            grid.insertBefore(artigo, linkAdicionar);
+        }
+    );
+}
+
+renderizarEstante();
+DB.ready.then(function() {
+    renderizarEstante();
+});
 
