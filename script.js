@@ -879,62 +879,93 @@ if (btnAtualizarProgresso) {
         "click",
         async function() {
 
-            const progresso =
-                prompt(
-                    "Digite seu progresso de 0 a 100:"
+            var inputValor = document.getElementById(
+                "inputProgresso"
+            );
+
+            if (!inputValor) {
+                inputValor = document.createElement("input");
+                inputValor.id = "inputProgresso";
+                inputValor.type = "number";
+                inputValor.min = "0";
+                inputValor.max = "100";
+                inputValor.placeholder = "0 a 100";
+                inputValor.style.padding = "8px 12px";
+                inputValor.style.border = "1px solid var(--borda)";
+                inputValor.style.borderRadius = "8px";
+                inputValor.style.fontSize = "14px";
+                inputValor.style.marginRight = "8px";
+
+                var btnOk = document.createElement("button");
+                btnOk.type = "button";
+                btnOk.textContent = "OK";
+                btnOk.className = "btn btn-roxo";
+                btnOk.style.padding = "8px 16px";
+
+                btnOk.addEventListener(
+                    "click",
+                    function() {
+                        var valor = Number(inputValor.value);
+
+                        if (
+                            !Number.isNaN(valor) &&
+                            valor >= 0 &&
+                            valor <= 100
+                        ) {
+                            aplicarProgresso(valor);
+                            inputValor.value = "";
+                        } else {
+                            mostrarNotificacao(
+                                "Digite um número entre 0 e 100.",
+                                "aviso"
+                            );
+                        }
+                    }
                 );
 
-
-            if (progresso === null) {
-                return;
-            }
-
-
-            const valor =
-                Number(progresso);
-
-
-            if (
-                !Number.isNaN(valor) &&
-                valor >= 0 &&
-                valor <= 100
-            ) {
-
-                if (textoProgresso) {
-
-                    textoProgresso.textContent =
-                        "Progresso: " +
-                        valor +
-                        "%";
-
-                }
-
-
-                if (barraProgresso) {
-
-                    barraProgresso.style.width =
-                        valor + "%";
-
-                }
-
-
-                await definir(
-                    "progresso.livro",
-                    valor
+                btnAtualizarProgresso.parentNode.insertBefore(
+                    inputValor,
+                    btnAtualizarProgresso.nextSibling
                 );
-
-            }
-
-            else {
-
-                mostrarNotificacao(
-                    "Digite um número entre 0 e 100.",
-                    "aviso"
+                btnAtualizarProgresso.parentNode.insertBefore(
+                    btnOk,
+                    inputValor.nextSibling
                 );
-
             }
+
+            inputValor.focus();
 
         }
+    );
+}
+
+function aplicarProgresso(valor) {
+
+    if (textoProgresso) {
+
+        textoProgresso.textContent =
+            "Progresso: " +
+            valor +
+            "%";
+
+    }
+
+
+    if (barraProgresso) {
+
+        barraProgresso.style.width = valor + "%";
+
+    }
+
+
+    definir(
+        "progresso.livro",
+        valor
+    );
+
+    mostrarNotificacao(
+        "Progresso atualizado!",
+        "sucesso"
     );
 
 }
@@ -1478,9 +1509,21 @@ function renderizarEncontros() {
 
     if (agendaLista && Array.isArray(encontros.agenda)) {
 
+        var ordemMes = {
+            JAN: 1, FEV: 2, MAR: 3, ABR: 4, MAI: 5, JUN: 6,
+            JUL: 7, AGO: 8, SET: 9, OUT: 10, NOV: 11, DEZ: 12
+        };
+        var mesAtual = new Date().getMonth() + 1;
+
+        var agendaFiltrada = encontros.agenda.filter(
+            function(item) {
+                return ordemMes[item.mes] >= mesAtual;
+            }
+        );
+
         agendaLista.innerHTML = "";
 
-        encontros.agenda.forEach(
+        agendaFiltrada.forEach(
             function(item) {
 
                 var card = document.createElement("article");
@@ -1752,5 +1795,10 @@ if (btnSair) {
         }
     );
 
+}
+
+// Sincroniza dados do usuário ao carregar a página (fallback se onAuthStateChanged ainda não disparou)
+if (DB.auth && DB.auth.currentUser) {
+    sincronizarDadosUsuario();
 }
 
