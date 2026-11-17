@@ -1371,19 +1371,63 @@ header {
 }
 
 
+.sala-link-edicao {
+    margin-top: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    align-items: flex-start;
+}
+
+
+.sala-link-edicao label {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #716b71;
+
+    letter-spacing: 0.3px;
+}
+
+
+.sala-link-edicao input[type="url"] {
+    width: 320px;
+
+    min-height: 52px;
+
+    padding: 0 17px;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 11px;
+
+    font-size: 15px;
+
+    background: #f4f8fa;
+
+    color: #444;
+}
+
+
+.sala-link-edicao input[type="url"]:focus {
+    border-color: var(--roxo);
+
+    background: white;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 70, 104, 0.08);
+}
+
+
 @media(max-width: 600px) {
 
-    .info-sala {
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-
-    .sala-btn {
+    .sala-link-edicao input[type="url"] {
         width: 100%;
-
-        min-width: unset;
     }
 
 }

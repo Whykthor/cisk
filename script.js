@@ -796,6 +796,100 @@ if (btnConfirmarEncontro) {
 }
 
 
+
+// =========================================
+// LINK DA SALA ONLINE (GOOGLE MEET)
+// =========================================
+
+const inputLinkSala =
+    document.getElementById(
+        "inputLinkSala"
+    );
+
+const btnSalvarLinkSala =
+    document.getElementById(
+        "btnSalvarLinkSala"
+    );
+
+const linkSalaMeet =
+    document.getElementById(
+        "linkSalaMeet"
+    );
+
+if (inputLinkSala && btnSalvarLinkSala) {
+
+    (async function() {
+
+        var meetUrlSalvo =
+            await obter(
+                "encontros.proximo.meetUrl"
+            );
+
+        if (meetUrlSalvo) {
+
+            inputLinkSala.value = meetUrlSalvo;
+
+            if (linkSalaMeet) {
+
+                linkSalaMeet.href = meetUrlSalvo;
+
+            }
+
+        }
+
+    })();
+
+    btnSalvarLinkSala.addEventListener(
+        "click",
+        async function() {
+
+            var url = inputLinkSala
+                ? inputLinkSala.value.trim()
+                : "";
+
+            if (!url) {
+
+                mostrarNotificacao(
+                    "Informe o link do Google Meet.",
+                    "aviso"
+                );
+
+                return;
+
+            }
+
+            try {
+
+                await definir(
+                    "encontros.proximo.meetUrl",
+                    url
+                );
+
+                if (linkSalaMeet) {
+
+                    linkSalaMeet.href = url;
+
+                }
+
+                mostrarNotificacao(
+                    "Link da sala atualizado!",
+                    "sucesso"
+                );
+
+            } catch (erro) {
+
+                mostrarNotificacao(
+                    "Não foi possível salvar o link da sala.",
+                    "erro"
+                );
+
+            }
+
+        }
+    );
+
+}
+
 // =========================================
 // WORKSHOP
 // =========================================
@@ -1689,28 +1783,6 @@ if (pesquisaLivro) {
 
 
 // =========================================
-// EXPORTAR / IMPORTAR DADOS (JSON) - DESABILITADOS
-// =========================================
-
-const btnExportarDados =
-    document.getElementById(
-        "btnExportarDados"
-    );
-
-const btnImportarDados =
-    document.getElementById(
-        "btnImportarDados"
-    );
-
-if (btnExportarDados) {
-    btnExportarDados.disabled = true;
-}
-
-if (btnImportarDados) {
-    btnImportarDados.disabled = true;
-}
-
-// =========================================
 // SAIR DA CONTA
 // =========================================
 
@@ -2000,7 +2072,7 @@ if (btnBuscarApi && pesquisaLivro) {
         async function() {
             var termo = pesquisaLivro.value.trim();
 
-            if (!termo) {
+            if (!termo || termo.length < 3) {
                 modoApi = false;
                 livrosApi = [];
                 renderizarLivros(
@@ -2076,6 +2148,13 @@ async function renderizarEstante() {
     }
 
     var estante = await DB.obterEstante();
+
+    var elStatDesejados = document.getElementById("statDesejados");
+    if (elStatDesejados) {
+        elStatDesejados.textContent = estante && estante.length !== undefined
+            ? estante.length
+            : 0;
+    }
 
     grid.innerHTML = "";
     if (linkAdicionar) {
